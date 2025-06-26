@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,6 +39,14 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         Category category = categoryList.get(position);
         holder.txtName.setText(category.getName());
 
+        // Đổi màu theo trạng thái chọn
+        if (category.isSelected()) {
+            holder.txtName.setBackgroundResource(R.drawable.bg_category_selected);
+            holder.txtName.setTextColor(Color.WHITE);
+        } else {
+            holder.txtName.setBackgroundResource(R.drawable.bg_category_unselected);
+            holder.txtName.setTextColor(Color.BLACK);
+        }
 
         holder.itemView.setOnClickListener(v -> listener.onCategoryClick(position));
     }

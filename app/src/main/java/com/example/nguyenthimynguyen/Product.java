@@ -1,25 +1,33 @@
 package com.example.nguyenthimynguyen;
 
+import java.util.Objects;
+
 public class Product {
     private String name;
     private int imageResId;
-    private double price;
+    private double price;         // Giá gốc
+    private double salePrice;     // ✅ Giá khuyến mãi
     private String description;
     private float rating;
     private int sold;
-    private int quantity = 1; // Mặc định mỗi sản phẩm có 1
+    private int quantity = 1;
+    private String category;
 
-    public Product(String name, int imageResId, double price, String description, float rating, int sold) {
+    // ✅ Constructor đầy đủ với salePrice
+    public Product(String name, int imageResId, double price, double salePrice,
+                   String description, float rating, int sold, String category) {
         this.name = name;
         this.imageResId = imageResId;
         this.price = price;
+        this.salePrice = salePrice;
         this.description = description;
         this.rating = rating;
         this.sold = sold;
         this.quantity = 1;
+        this.category = category;
     }
 
-    // Getter và Setter cho quantity
+    // Getter & Setter cho quantity
     public int getQuantity() {
         return quantity;
     }
@@ -28,7 +36,7 @@ public class Product {
         this.quantity = quantity;
     }
 
-    // Các getter hiện tại
+    // Getters khác
     public String getName() {
         return name;
     }
@@ -41,6 +49,10 @@ public class Product {
         return price;
     }
 
+    public double getSalePrice() {
+        return salePrice;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -51,5 +63,23 @@ public class Product {
 
     public int getSold() {
         return sold;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    // ✅ Bổ sung equals() và hashCode() để dùng làm key trong HashMap
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Product)) return false;
+        Product other = (Product) obj;
+        return name.equals(other.name) && imageResId == other.imageResId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, imageResId);
     }
 }

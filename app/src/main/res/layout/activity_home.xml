@@ -7,10 +7,12 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
+    <!-- Nội dung cuộn -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/bottomNavigation">
+        android:layout_marginBottom="56dp"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -18,13 +20,13 @@
             android:orientation="vertical"
             android:padding="12dp">
 
-            <!-- Thanh tìm kiếm + giỏ hàng -->
+            <!-- Thanh tìm kiếm -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:padding="8dp">
+                android:padding="4dp">
 
                 <EditText
                     android:id="@+id/edtSearch"
@@ -53,87 +55,87 @@
                     android:src="@drawable/ic_cart" />
             </LinearLayout>
 
-            <!-- Địa chỉ -->
+            <!-- Địa chỉ người dùng -->
             <TextView
                 android:id="@+id/tvAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="123 Nguyễn Văn Cừ, Quận 5, TP.HCM"
+                android:text="👤 Người dùng"
                 android:textColor="#555555"
                 android:textSize="14sp"
-                android:drawableStart="@android:drawable/ic_menu_mylocation"
                 android:paddingStart="6dp"
-                android:paddingBottom="8dp" />
+                android:paddingBottom="6dp" />
 
-            <!-- Banner -->
+            <!-- Banner thu nhỏ -->
             <ImageView
                 android:id="@+id/imgBanner"
                 android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:layout_marginTop="12dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="8dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/banner" />
 
-            <!-- Danh mục -->
+            <!-- Danh mục thu nhỏ -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Danh mục"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="12dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvCategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:overScrollMode="never"
-                android:padding="8dp" />
+                android:layout_marginTop="6dp"
+                android:padding="4dp"
+                android:overScrollMode="never" />
 
             <!-- Sản phẩm mới -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sản phẩm mới"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="12dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvNewProduct"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:overScrollMode="never"
-                android:padding="8dp"
-                android:scrollbars="horizontal" />
+                android:layout_marginTop="6dp"
+                android:scrollbars="horizontal"
+                android:overScrollMode="never" />
 
             <!-- Sản phẩm nổi bật -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sản phẩm nổi bật"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="12dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvFeaturedProducts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:overScrollMode="never"
-                android:padding="8dp"
-                android:scrollbars="horizontal" />
+                android:layout_marginTop="6dp"
+                android:scrollbars="horizontal"
+                android:overScrollMode="never" />
         </LinearLayout>
     </ScrollView>
 
-    <!-- Bottom Navigation -->
+    <!-- Thanh điều hướng dưới -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:background="#FFFFFF"
+        app:itemIconTint="@color/nav_item_color"
+        app:itemTextColor="@color/nav_item_color"
         app:menu="@menu/bottom_nav_menu" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

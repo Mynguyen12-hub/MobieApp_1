@@ -4,23 +4,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CartManager {
-    private static CartManager instance;
-    private List<Product> cart = new ArrayList<>();
+    private static List<Product> cartItems = new ArrayList<>();
 
-    public static CartManager getInstance() {
-        if (instance == null) instance = new CartManager();
-        return instance;
+    public static void addToCart(Product product) {
+        boolean exists = false;
+        for (Product p : cartItems) {
+            if (p.getName().equals(product.getName())) {
+                p.setQuantity(p.getQuantity() + product.getQuantity());
+                exists = true;
+                break;
+            }
+        }
+        if (!exists) {
+            cartItems.add(product);
+        }
     }
 
-    public void addToCart(Product product) {
-        cart.add(product);
+    public static List<Product> getCartItems() {
+        return cartItems;
     }
 
-    public List<Product> getCart() {
-        return cart;
+    public static int getCartSize() {
+        int count = 0;
+        for (Product p : cartItems) {
+            count += p.getQuantity();
+        }
+        return count;
     }
 
-    public void clearCart() {
-        cart.clear();
+    public static void clearCart() {
+        cartItems.clear();
+    }
+
+    public static void removeItem(int position) {
+        if (position >= 0 && position < cartItems.size()) {
+            cartItems.remove(position);
+        }
     }
 }
