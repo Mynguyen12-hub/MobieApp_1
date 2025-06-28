@@ -1,25 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF0F5"> <!-- Hồng nhạt (lavender blush) -->
+    android:background="@drawable/anhnen"
+    android:padding="24dp">
 
-    <LinearLayout
+    <!-- Form đăng ký trắng bo góc -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp"
-        android:gravity="center_horizontal">
+        android:layout_centerInParent="true">
 
-        <!-- Tiêu đề -->
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Đăng ký tài khoản"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="#D81B60"
-            android:layout_marginBottom="24dp" />
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_white"
+            android:padding="24dp"
+            android:elevation="8dp">
+
+            <!-- Tiêu đề -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đăng ký tài khoản"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#D81B60"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="24dp" />
 
         <!-- Họ và tên -->
         <EditText
@@ -29,8 +38,6 @@
             android:hint="Họ và tên"
             android:backgroundTint="#F48FB1"
             android:padding="10dp" />
-
-
 
         <!-- Giới tính -->
         <TextView
@@ -74,6 +81,7 @@
             android:layout_marginTop="12dp"
             android:backgroundTint="#F48FB1"
             android:padding="10dp" />
+
         <!-- Tên đăng nhập -->
         <EditText
             android:id="@+id/edtNewUsername"
@@ -106,6 +114,15 @@
             android:backgroundTint="#F48FB1"
             android:padding="10dp" />
 
+        <!-- Checkbox điều khoản -->
+        <CheckBox
+            android:id="@+id/cbAgreeTerms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Tôi đồng ý với Điều khoản và Chính sách"
+            android:textColor="#555555" />
+
         <!-- Nút đăng ký -->
         <Button
             android:id="@+id/btnSignUp"
@@ -128,5 +145,45 @@
             android:textColor="#4A148C"
             android:padding="12dp" />
 
-    </LinearLayout>
-</ScrollView>
+        <!-- Mô tả mạng xã hội -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hoặc đăng ký bằng tài khoản mạng xã hội"
+            android:textColor="#888888"
+            android:textSize="14sp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Social buttons -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/btnGoogle"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_google"
+                android:layout_marginEnd="16dp" />
+
+            <ImageView
+                android:id="@+id/btnApple"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_apple"
+                android:layout_marginEnd="16dp" />
+
+            <ImageView
+                android:id="@+id/btnFacebook"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_facebook" />
+        </LinearLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

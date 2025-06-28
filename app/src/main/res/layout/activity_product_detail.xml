@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#FCE4EC">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -28,17 +28,54 @@
                     android:scaleType="centerCrop"
                     android:contentDescription="Ảnh sản phẩm" />
 
-                <ImageButton
-                    android:id="@+id/btnBack"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="12dp"
-                    android:background="@drawable/rounded_back_button_bg"
-                    android:src="@drawable/rounded_border_button"
-                    android:scaleType="center"
-                    android:contentDescription="Quay lại"
-                    android:tint="#FFFFFF"
-                    android:layout_gravity="top|start" />
+                <!-- Thanh điều hướng trên cùng -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="12dp"
+                    android:layout_gravity="top">
+
+                    <!-- Nút quay lại -->
+                    <ImageButton
+                        android:id="@+id/btnBack"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/rounded_back_button_bg"
+                        android:src="@drawable/rounded_border_button"
+                        android:scaleType="center"
+                        android:contentDescription="Quay lại"
+                        android:tint="#FFFFFF" />
+
+                    <View
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp" />
+
+                    <!-- Nút giỏ hàng -->
+                    <ImageButton
+                        android:id="@+id/btnCart"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/rounded_back_button_bg"
+                        android:src="@drawable/ic_cart"
+                        android:scaleType="center"
+                        android:contentDescription="Giỏ hàng"
+                        android:tint="#FFFFFF"
+                        android:layout_marginEnd="8dp" />
+
+                    <!-- Nút chat -->
+                    <ImageButton
+                        android:id="@+id/btnChat"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/rounded_back_button_bg"
+                        android:src="@drawable/ic_chat"
+                        android:scaleType="center"
+                        android:contentDescription="Chat"
+                        android:tint="#FFFFFF" />
+                </LinearLayout>
             </FrameLayout>
 
             <!-- Tên sản phẩm -->
@@ -181,28 +218,38 @@
                 android:overScrollMode="never"
                 android:nestedScrollingEnabled="false"/>
 
-
-            <!-- Nút hành động -->
-            <Button
-                android:id="@+id/btnAddToCart"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="Thêm vào giỏ hàng"
-                android:textColor="#fff"
-                android:textAllCaps="false"
-                android:textSize="16sp"
-                android:background="@drawable/rounded_pink_button"
-                android:layout_marginBottom="12dp" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="24dp">
 
-            <Button
-                android:id="@+id/btnBuyNow"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="Mua ngay"
-                android:textColor="#fff"
-                android:textAllCaps="false"
-                android:textSize="16sp"
-                android:background="@drawable/rounded_gray_button" />
+                <Button
+                    android:id="@+id/btnAddToCart"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="50dp"
+                    android:text="Thêm vào giỏ hàng"
+                    android:textColor="#E91E63"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    android:background="@drawable/bg_sent_message"
+                    android:layout_marginEnd="8dp" />
+
+                <Button
+                    android:id="@+id/btnBuyNow"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="50dp"
+                    android:text="Mua ngay"
+                    android:textColor="#FFFFFF"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    android:backgroundTint="#E91E63"
+                    android:radius="12dp" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

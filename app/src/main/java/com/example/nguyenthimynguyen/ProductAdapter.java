@@ -1,5 +1,6 @@
 package com.example.nguyenthimynguyen;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +22,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         this.productList = list;
     }
 
+    // Cập nhật danh sách sản phẩm (dùng khi tìm kiếm, lọc)
     public void updateList(List<Product> newList) {
         this.productList = newList;
         notifyDataSetChanged();
@@ -30,7 +31,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product, parent, false);
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_product, parent, false);
         return new ProductViewHolder(v);
     }
 
@@ -43,7 +45,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.txtProductDescription.setText(p.getDescription());
         holder.txtRating.setText("⭐ " + p.getRating());
         holder.txtSold.setText("• Đã bán " + p.getSold());
-
         holder.txtProductSalePrice.setText(String.format("%,.0f đ", p.getSalePrice()));
 
         if (p.getPrice() == p.getSalePrice()) {
@@ -53,37 +54,43 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             holder.txtProductOriginalPrice.setText(String.format("%,.0f đ", p.getPrice()));
         }
 
+        // ✅ Mua ngay: Xóa giỏ cũ, thêm sản phẩm mới, mở CheckoutActivity
         holder.btnBuyNow.setOnClickListener(v -> {
-            Product selectedProduct = productList.get(holder.getAdapterPosition());
-            CartManager.addToCart(selectedProduct);
-            Toast.makeText(v.getContext(), "Đã thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
+            int pos = holder.getAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION) {
+                Context context = v.getContext();
+                Product selectedProduct = productList.get(pos).clone();
+                selectedProduct.setQuantity(1);
+                CartManager.clearCart();               // Xóa giỏ cũ
+                CartManager.addItem(selectedProduct);  // Thêm sản phẩm mới
 
-            Intent intent = new Intent(v.getContext(), CartActivity.class);
-            v.getContext().startActivity(intent);
+                Intent intent = new Intent(context, CheckoutActivity.class);
+                context.startActivity(intent);         // Mở giao diện thanh toán
+            }
         });
 
+        // ✅ Xem chi tiết sản phẩm
         holder.btnDetail.setOnClickListener(v -> {
-            Product pDetail = productList.get(holder.getAdapterPosition());
-            Intent intent = new Intent(v.getContext(), ProductDetailActivity.class);
-            intent.putExtra("name", pDetail.getName());
-            intent.putExtra("imageResId", pDetail.getImageResId());
-            intent.putExtra("price", pDetail.getPrice());
-            intent.putExtra("salePrice", pDetail.getSalePrice());
-            intent.putExtra("description", pDetail.getDescription());
-            intent.putExtra("rating", pDetail.getRating());
-            intent.putExtra("sold", pDetail.getSold());
-            intent.putExtra("category", pDetail.getCategory());
-            v.getContext().startActivity(intent);
+            int pos = holder.getAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION) {
+                Context context = v.getContext();
+                Product pDetail = productList.get(pos);
+
+                Intent intent = new Intent(context, ProductDetailActivity.class);
+                intent.putExtra("id", pDetail.getId());
+                context.startActivity(intent);
+            }
         });
     }
 
     @Override
     public int getItemCount() {
-        return productList.size();
+        return productList != null ? productList.size() : 0;
     }
 
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
-        TextView txtProductName, txtProductSalePrice, txtProductOriginalPrice, txtProductDescription, txtRating, txtSold;
+        TextView txtProductName, txtProductSalePrice, txtProductOriginalPrice,
+                txtProductDescription, txtRating, txtSold;
         ImageView imgProduct;
         Button btnBuyNow, btnDetail;
 

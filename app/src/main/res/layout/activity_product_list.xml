@@ -3,34 +3,39 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FCE4EC">>
 
-    <!-- Ô tìm kiếm và giỏ hàng -->
+    <!-- Thanh tìm kiếm và giỏ hàng -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:gravity="center_vertical">
 
         <EditText
             android:id="@+id/edtSearch"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="40dp"
+            android:layout_weight="1"
             android:hint="Tìm kiếm hoa..."
             android:drawableStart="@android:drawable/ic_menu_search"
-            android:background="@android:drawable/editbox_background_normal"/>
+            android:paddingHorizontal="12dp"
+            android:background="@drawable/search_box_bg"
+            android:textColor="#000"/>
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp">
 
             <ImageView
                 android:id="@+id/btnCart"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/ic_cart"
-                android:padding="8dp" />
+                android:padding="6dp"/>
 
             <TextView
                 android:id="@+id/tvCartCount"
@@ -39,21 +44,27 @@
                 android:layout_alignTop="@id/btnCart"
                 android:layout_alignEnd="@id/btnCart"
                 android:text="0"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:textColor="#FFF"
                 android:background="@drawable/circle_red"
-                android:padding="4dp"
+                android:padding="2dp"
+                android:minWidth="18dp"
+                android:gravity="center"
                 android:visibility="gone"/>
         </RelativeLayout>
     </LinearLayout>
 
-    <!-- Danh mục -->
+    <!-- Danh mục nằm ngang -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCategory"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:padding="8dp"
-        android:background="#FFF"/>
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="4dp"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:orientation="horizontal"/>
 
     <!-- Danh sách sản phẩm -->
     <androidx.recyclerview.widget.RecyclerView
@@ -61,7 +72,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="8dp"/>
+        android:padding="8dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"/>
 
     <!-- Bottom navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView

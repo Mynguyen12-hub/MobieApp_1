@@ -5,9 +5,9 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#FCE4EC">
 
-    <!-- Nội dung cuộn -->
+    <!-- ScrollView để cuộn nội dung -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,13 +20,13 @@
             android:orientation="vertical"
             android:padding="12dp">
 
-            <!-- Thanh tìm kiếm -->
+            <!-- Thanh tìm kiếm + giỏ hàng -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:padding="4dp">
+                android:padding="8dp">
 
                 <EditText
                     android:id="@+id/edtSearch"
@@ -35,9 +35,11 @@
                     android:layout_height="40dp"
                     android:hint="Tìm kiếm hoa..."
                     android:drawableStart="@android:drawable/ic_menu_search"
-                    android:padding="8dp"
-                    android:background="@android:drawable/editbox_background_normal" />
+                    android:paddingHorizontal="12dp"
+                    android:background="@drawable/search_box_bg"
+                    android:textColor="#000" />
 
+                <!-- ✅ Thêm nút tìm kiếm -->
                 <ImageView
                     android:id="@+id/btnSearch"
                     android:layout_width="40dp"
@@ -46,16 +48,36 @@
                     android:padding="8dp"
                     android:layout_marginStart="8dp" />
 
-                <ImageView
-                    android:id="@+id/btnCart"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="8dp"
-                    android:padding="6dp"
-                    android:src="@drawable/ic_cart" />
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp">
+
+                    <ImageView
+                        android:id="@+id/btnCart"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_cart"
+                        android:padding="6dp" />
+
+                    <TextView
+                        android:id="@+id/tvCartCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@id/btnCart"
+                        android:layout_alignEnd="@id/btnCart"
+                        android:text="0"
+                        android:textSize="11sp"
+                        android:textColor="#FFF"
+                        android:background="@drawable/circle_red"
+                        android:padding="2dp"
+                        android:minWidth="18dp"
+                        android:gravity="center"
+                        android:visibility="gone"/>
+                </RelativeLayout>
             </LinearLayout>
 
-            <!-- Địa chỉ người dùng -->
+            <!-- Người dùng -->
             <TextView
                 android:id="@+id/tvAddress"
                 android:layout_width="match_parent"
@@ -66,7 +88,7 @@
                 android:paddingStart="6dp"
                 android:paddingBottom="6dp" />
 
-            <!-- Banner thu nhỏ -->
+            <!-- Banner -->
             <ImageView
                 android:id="@+id/imgBanner"
                 android:layout_width="match_parent"
@@ -75,7 +97,7 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/banner" />
 
-            <!-- Danh mục thu nhỏ -->
+            <!-- Danh mục -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

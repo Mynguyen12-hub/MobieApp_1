@@ -32,7 +32,7 @@
             android:id="@+id/edtEmail"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:hint="Enter your email"
+            android:hint="Hãy nhập email"
             android:inputType="textEmailAddress"
             android:background="@drawable/bg_input_rounded"
             android:paddingHorizontal="16dp"
@@ -45,7 +45,7 @@
             android:id="@+id/edtPassword"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:hint="Enter password"
+            android:hint="Hãy nhập mât khẩu"
             android:inputType="textPassword"
             android:background="@drawable/bg_input_rounded"
             android:paddingHorizontal="16dp"
@@ -58,20 +58,24 @@
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Login"
+            android:text="Đăng nhập"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:background="@drawable/bg_button_rounded"
             android:layout_marginBottom="12dp" />
 
         <!-- Nút Đăng ký -->
-        <Button
+        <TextView
             android:id="@+id/btnRegister"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Register"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:background="@drawable/bg_button_rounded_light" />
+            android:text="Nếu bạn chưa có tài khoản? Đăng ký"
+            android:textColor="#D81B60"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp" />
     </LinearLayout>
 </RelativeLayout>

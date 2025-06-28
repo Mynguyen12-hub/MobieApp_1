@@ -1,52 +1,85 @@
 package com.example.nguyenthimynguyen;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.text.TextUtils;
 import android.widget.EditText;
+import android.widget.ImageView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
+;
+
 public class ChatActivity extends AppCompatActivity {
 
-    private RecyclerView rvChat;
+    private RecyclerView rvMessages;
     private EditText edtMessage;
-    private Button btnSend;
+    private ImageView btnSend;
     private ChatAdapter chatAdapter;
-    private List<ChatMessage> chatMessages;
+    private List<ChatMessage> messageList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);
+        bottomNavigation.setSelectedItemId(R.id.nav_chat);
 
-        rvChat = findViewById(R.id.rvChat);
+        bottomNavigation.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_home) {
+                startActivity(new Intent(this, HomeActivity.class));
+                return true;
+            } else if (id == R.id.nav_products) {
+                startActivity(new Intent(this, ProductListActivity.class));
+                return true;
+            } else if (id == R.id.nav_admin) {
+                startActivity(new Intent(this, LoginActivity.class));
+                return true;
+            }
+            return false;
+        });
+
+        // Ánh xạ
+        rvMessages = findViewById(R.id.rvMessages);
         edtMessage = findViewById(R.id.edtMessage);
         btnSend = findViewById(R.id.btnSend);
 
-        chatMessages = new ArrayList<>();
-        chatAdapter = new ChatAdapter(chatMessages);
+        // Khởi tạo danh sách tin nhắn
+        messageList = new ArrayList<>();
+        chatAdapter = new ChatAdapter(messageList);
 
-        rvChat.setLayoutManager(new LinearLayoutManager(this));
-        rvChat.setAdapter(chatAdapter);
+        // Thiết lập RecyclerView
+        rvMessages.setLayoutManager(new LinearLayoutManager(this));
+        rvMessages.setAdapter(chatAdapter);
 
+        // ✅ Thêm hiệu ứng trượt
+        rvMessages.setItemAnimator(new SlideInLeftAnimator());
+
+        // Gửi tin nhắn
         btnSend.setOnClickListener(v -> {
-            String content = edtMessage.getText().toString().trim();
-            if (!content.isEmpty()) {
-                chatMessages.add(new ChatMessage(content, true)); // true = tin nhắn gửi đi
-                chatAdapter.notifyItemInserted(chatMessages.size() - 1);
-                rvChat.scrollToPosition(chatMessages.size() - 1);
+            String msg = edtMessage.getText().toString().trim();
+            if (!TextUtils.isEmpty(msg)) {
+                sendMessage(msg);
                 edtMessage.setText("");
-
-                // Giả lập phản hồi từ hệ thống hoặc người khác
-                rvChat.postDelayed(() -> {
-                    chatMessages.add(new ChatMessage("Đây là phản hồi tự động.", false));
-                    chatAdapter.notifyItemInserted(chatMessages.size() - 1);
-                    rvChat.scrollToPosition(chatMessages.size() - 1);
-                }, 1000);
             }
         });
+    }
+
+    private void sendMessage(String userMessage) {
+        messageList.add(new ChatMessage(userMessage, true)); // Tin người dùng
+        messageList.add(new ChatMessage("🌼 Cảm ơn bạn đã nhắn tin!", false)); // Phản hồi đơn giản
+
+        // Cập nhật giao diện
+        chatAdapter.notifyItemRangeInserted(messageList.size() - 2, 2);
+        rvMessages.scrollToPosition(messageList.size() - 1);
     }
 }

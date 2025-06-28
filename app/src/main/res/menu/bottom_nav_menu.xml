@@ -6,7 +6,7 @@
 
     <item
         android:id="@+id/nav_products"
-        android:icon="@drawable/ic_flower"
+        android:icon="@drawable/img"
         android:title="Sản phẩm" />
 
     <item

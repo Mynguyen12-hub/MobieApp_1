@@ -1,8 +1,9 @@
 package com.example.nguyenthimynguyen;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -10,85 +11,89 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import java.util.List;
 
 public class CartActivity extends AppCompatActivity {
 
     private RecyclerView rvCart;
-    private TextView txtSubtotal, txtShipping, txtTotal;
-    private EditText edtPromo;
-    private Button btnApply, btnNext;
-    private CartAdapter cartAdapter;
-    private List<Product> cartList;
-
-    private final double SHIPPING_FEE = 15000;
-    private double discount = 0;
+    private TextView txtTotal;
+    private Button btnCheckout;
+    private CartAdapter adapter;
+    private List<Product> cartItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
+        // ✅ Khởi tạo sản phẩm & giỏ hàng
+        ProductRepository.initProducts();
+        CartManager.init(this);
+        cartItems = CartManager.getCart();
+
+        // ✅ Ánh xạ View
         rvCart = findViewById(R.id.rvCart);
-        txtSubtotal = findViewById(R.id.txtSubtotal);
-        txtShipping = findViewById(R.id.txtShipping);
         txtTotal = findViewById(R.id.txtTotal);
-        edtPromo = findViewById(R.id.edtPromo);
-        btnApply = findViewById(R.id.btnApply);
-        btnNext = findViewById(R.id.btnNext);
+        btnCheckout = findViewById(R.id.btnCheckout);
 
-        // ✅ Sửa ở đây
-        cartList = CartManager.getCartItems();
+        // ✅ Setup RecyclerView
+        rvCart.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new CartAdapter(cartItems, this::updateTotal);
+        rvCart.setAdapter(adapter);
 
-        cartAdapter = new CartAdapter(cartList, new CartAdapter.OnCartChangeListener() {
-            @Override
-            public void onCartChanged() {
-                updatePrices();
+        // ✅ Hiển thị tổng ban đầu
+        updateTotal();
+
+        // ✅ Xử lý nút thanh toán
+        btnCheckout.setOnClickListener(v -> {
+            if (cartItems.isEmpty()) {
+                Toast.makeText(this, "Giỏ hàng trống!", Toast.LENGTH_SHORT).show();
+            } else {
+                startActivity(new Intent(this, CheckoutActivity.class));
             }
         });
 
-        rvCart.setLayoutManager(new LinearLayoutManager(this));
-        rvCart.setAdapter(cartAdapter);
+        // ✅ Xử lý Bottom Navigation
+        BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);
 
-        updatePrices();
-
-        btnApply.setOnClickListener(v -> applyPromo());
-
-        btnNext.setOnClickListener(v -> {
-            Toast.makeText(this, "Chuyển sang thanh toán...", Toast.LENGTH_SHORT).show();
-            // startActivity(new Intent(this, PaymentActivity.class));
+        bottomNavigation.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_home) {
+                startActivity(new Intent(this, HomeActivity.class));
+                return true;
+            } else if (id == R.id.nav_products) {
+                startActivity(new Intent(this, ProductListActivity.class));
+                return true;
+            } else if (id == R.id.nav_chat) {
+                startActivity(new Intent(this, ChatActivity.class));
+                return true;
+            } else if (id == R.id.nav_admin) {
+                SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.clear();
+                editor.apply();
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
+                return true;
+            }
+            return false;
         });
     }
 
-    private void applyPromo() {
-        String promoCode = edtPromo.getText().toString().trim().toUpperCase();
-
-        if (promoCode.equals("GIAM10")) {
-            discount = 0.1;
-            Toast.makeText(this, "Áp dụng mã giảm 10%", Toast.LENGTH_SHORT).show();
-        } else if (promoCode.equals("FREESHIP")) {
-            discount = 0;
-            Toast.makeText(this, "Miễn phí vận chuyển", Toast.LENGTH_SHORT).show();
-        } else {
-            discount = 0;
-            Toast.makeText(this, "Mã không hợp lệ", Toast.LENGTH_SHORT).show();
+    private void updateTotal() {
+        double total = 0;
+        for (Product product : cartItems) {
+            total += product.getSalePrice() * product.getQuantity();
         }
-
-        updatePrices();
+        txtTotal.setText(String.format("Tổng: %,.0f đ", total));
     }
 
-    private void updatePrices() {
-        double subtotal = 0;
-        for (Product p : cartList) {
-            subtotal += p.getSalePrice() * p.getQuantity();
-        }
-
-        double shipping = edtPromo.getText().toString().equalsIgnoreCase("FREESHIP") ? 0 : SHIPPING_FEE;
-        double discounted = subtotal * (1 - discount);
-        double total = discounted + shipping;
-
-        txtSubtotal.setText(String.format("Subtotal: %,.0f đ", subtotal));
-        txtShipping.setText(String.format("Shipping: %,.0f đ", shipping));
-        txtTotal.setText(String.format("Total: %,.0f đ", total));
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
+        updateTotal();
     }
 }

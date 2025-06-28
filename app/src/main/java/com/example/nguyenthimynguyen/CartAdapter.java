@@ -1,8 +1,11 @@
 package com.example.nguyenthimynguyen;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,84 +14,83 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
+public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
-    private List<Product> cartList;
-    private OnCartChangeListener listener;
+    private List<Product> cartItems;
+    private Runnable onCartChanged;
 
-    public interface OnCartChangeListener {
-        void onCartChanged();
-    }
-
-    public CartAdapter(List<Product> list, OnCartChangeListener listener) {
-        this.cartList = list;
-        this.listener = listener;
+    public CartAdapter(List<Product> cartItems, Runnable onCartChanged) {
+        this.cartItems = cartItems;
+        this.onCartChanged = onCartChanged;
     }
 
     @NonNull
     @Override
-    public CartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_cart, parent, false);
-        return new CartViewHolder(v);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_cart, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
-        Product p = cartList.get(position);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Product product = cartItems.get(position);
 
-        holder.imgProduct.setImageResource(p.getImageResId());
-        holder.txtProductName.setText(p.getName());
-        holder.txtProductSalePrice.setText(String.format("%,.0f đ", p.getSalePrice()));
-        holder.txtProductQuantity.setText(String.valueOf(p.getQuantity()));
+        holder.imgProduct.setImageResource(product.getImageResId());
+        holder.txtName.setText(product.getName());
+        holder.txtDescription.setText(product.getDescription());
+        holder.txtQuantity.setText(String.valueOf(product.getQuantity()));
 
-        if (p.getPrice() == p.getSalePrice()) {
-            holder.txtProductOriginalPrice.setVisibility(View.GONE);
-        } else {
-            holder.txtProductOriginalPrice.setVisibility(View.VISIBLE);
-            holder.txtProductOriginalPrice.setText(String.format("%,.0f đ", p.getPrice()));
-        }
+        double itemTotal = product.getSalePrice() * product.getQuantity();
+        holder.txtPrice.setText(String.format("%,.0f đ", itemTotal));
 
+        // ✅ Tăng số lượng
         holder.btnPlus.setOnClickListener(v -> {
-            p.setQuantity(p.getQuantity() + 1);
+            product.setQuantity(product.getQuantity() + 1);
+            CartManager.saveCart(); // Không cần context
             notifyItemChanged(position);
-            listener.onCartChanged();
+            onCartChanged.run();
         });
 
+        // ✅ Giảm số lượng
         holder.btnMinus.setOnClickListener(v -> {
-            if (p.getQuantity() > 1) {
-                p.setQuantity(p.getQuantity() - 1);
+            if (product.getQuantity() > 1) {
+                product.setQuantity(product.getQuantity() - 1);
+                CartManager.saveCart();
                 notifyItemChanged(position);
-                listener.onCartChanged();
+                onCartChanged.run();
             }
         });
 
-        holder.btnDelete.setOnClickListener(v -> {
-            cartList.remove(position);
+        // ✅ Xóa sản phẩm
+        holder.btnRemove.setOnClickListener(v -> {
+            CartManager.removeItem(position); // Chỉ truyền index
             notifyItemRemoved(position);
-            listener.onCartChanged();
+            notifyItemRangeChanged(position, cartItems.size());
+            onCartChanged.run();
         });
     }
 
     @Override
     public int getItemCount() {
-        return cartList.size();
+        return cartItems.size();
     }
 
-    public static class CartViewHolder extends RecyclerView.ViewHolder {
-        ImageView imgProduct, btnDelete;
-        TextView txtProductName, txtProductSalePrice, txtProductOriginalPrice;
-        TextView btnPlus, btnMinus, txtProductQuantity;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView imgProduct;
+        TextView txtName, txtDescription, txtQuantity, txtPrice;
+        Button btnPlus, btnMinus;
+        ImageButton btnRemove;
 
-        public CartViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgProduct = itemView.findViewById(R.id.imgProduct);
-            txtProductName = itemView.findViewById(R.id.txtProductName);
-            txtProductSalePrice = itemView.findViewById(R.id.txtProductSalePrice);
-            txtProductOriginalPrice = itemView.findViewById(R.id.txtProductOriginalPrice);
+            imgProduct = itemView.findViewById(R.id.imgCartProduct);
+            txtName = itemView.findViewById(R.id.txtCartName);
+            txtDescription = itemView.findViewById(R.id.txtCartDescription);
+            txtQuantity = itemView.findViewById(R.id.txtCartQuantity);
+            txtPrice = itemView.findViewById(R.id.txtCartPrice);
             btnPlus = itemView.findViewById(R.id.btnPlus);
             btnMinus = itemView.findViewById(R.id.btnMinus);
-            txtProductQuantity = itemView.findViewById(R.id.txtProductQuantity);
-            btnDelete = itemView.findViewById(R.id.btnDelete);
+            btnRemove = itemView.findViewById(R.id.btnRemoveCartItem);
         }
     }
 }

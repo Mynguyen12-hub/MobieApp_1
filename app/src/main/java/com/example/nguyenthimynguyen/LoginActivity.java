@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,7 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 public class LoginActivity extends AppCompatActivity {
 
     EditText edtEmail, edtPassword;
-    Button btnLogin, btnRegister;
+    Button btnLogin;
+    TextView btnRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         btnRegister.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
         });
     }
 }

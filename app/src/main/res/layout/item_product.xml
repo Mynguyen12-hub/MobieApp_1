@@ -19,7 +19,7 @@
         <ImageView
             android:id="@+id/imgProduct"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="120dp"
             android:scaleType="centerCrop"
             android:layout_marginBottom="8dp"/>
 
@@ -98,29 +98,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="12dp">
 
             <Button
                 android:id="@+id/btnBuyNow"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_height="48dp"
                 android:text="Mua ngay"
-                android:textSize="12sp"
+                android:textSize="14sp"
+                android:textAllCaps="false"
                 android:background="@drawable/rounded_pink_button"
                 android:textColor="#FFFFFF"
-                android:layout_marginEnd="4dp"/>
+                android:layout_marginEnd="6dp" />
 
             <Button
                 android:id="@+id/btnDetail"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_height="48dp"
                 android:text="Chi tiết"
-                android:textSize="12sp"
+                android:textSize="14sp"
+                android:textAllCaps="false"
                 android:background="@drawable/bg_sent_message"
                 android:textColor="#FFFFFF"
-                android:layout_marginStart="4dp"/>
+                android:layout_marginStart="6dp" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

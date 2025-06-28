@@ -29,7 +29,7 @@ public class HomeActivity extends AppCompatActivity {
     ProductAdapter featuredAdapter, newAdapter;
     CategoryAdapter categoryAdapter;
     List<Product> allProducts;
-    TextView tvAddress;
+    TextView tvAddress, tvCartCount;
     BottomNavigationView bottomNavigation;
     String selectedCategory = "";
 
@@ -38,28 +38,36 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        // Khởi tạo giỏ hàng và sản phẩm
+        CartManager.init(this);
+        ProductRepository.initProducts();
+        allProducts = ProductRepository.getAllProducts();
+
+        // Ánh xạ view
         edtSearch = findViewById(R.id.edtSearch);
         btnSearch = findViewById(R.id.btnSearch);
         btnCart = findViewById(R.id.btnCart);
+        tvCartCount = findViewById(R.id.tvCartCount);
         rvFeaturedProducts = findViewById(R.id.rvFeaturedProducts);
         rvNewProducts = findViewById(R.id.rvNewProduct);
         rvCategory = findViewById(R.id.rvCategory);
         tvAddress = findViewById(R.id.tvAddress);
         bottomNavigation = findViewById(R.id.bottomNavigation);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        // Cập nhật giỏ hàng ban đầu
+        CartUtils.updateCartCount(tvCartCount);
 
+        // Xử lý click giỏ hàng
+        btnCart.setOnClickListener(v -> startActivity(new Intent(this, CartActivity.class)));
+
+        // Lấy tên người dùng
         SharedPreferences prefs = getSharedPreferences("user_data", MODE_PRIVATE);
         String username = prefs.getString("username", "admin");
         tvAddress.setText("👤 Người dùng: " + username);
 
+        // Xử lý bottom navigation
         bottomNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
-
             if (id == R.id.nav_home) {
                 return true;
             } else if (id == R.id.nav_products) {
@@ -69,19 +77,20 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(new Intent(this, ChatActivity.class));
                 return true;
             } else if (id == R.id.nav_admin) {
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.clear();
-                editor.apply();
-
-                Intent intent = new Intent(this, LoginActivity.class);
-                startActivity(intent);
-                finish();
+                startActivity(new Intent(this, UserActivity.class));
                 return true;
             }
-
-            return false;
+            return false; // ✅ Bắt buộc có dòng này nếu không sẽ lỗi biên dịch
         });
 
+        // Cập nhật padding cho hệ thống
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        // Danh mục
         rvCategory.setLayoutManager(new GridLayoutManager(this, 4));
         List<Category> categoryList = new ArrayList<>();
         categoryList.add(new Category("Mặt trời"));
@@ -91,7 +100,6 @@ public class HomeActivity extends AppCompatActivity {
 
         categoryAdapter = new CategoryAdapter(categoryList, position -> {
             String name = categoryList.get(position).getName();
-
             if (name.equals("Xem thêm")) {
                 categoryList.remove(position);
                 categoryList.add(new Category("Mặt trắng"));
@@ -105,64 +113,49 @@ public class HomeActivity extends AppCompatActivity {
         });
         rvCategory.setAdapter(categoryAdapter);
 
+        // RecyclerView sản phẩm
         rvFeaturedProducts.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rvNewProducts.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        allProducts = getSampleProducts();
-        List<Product> featuredList = allProducts.subList(0, 6);
-        List<Product> newList = allProducts.subList(6, 12);
-
-        featuredAdapter = new ProductAdapter(featuredList);
-        newAdapter = new ProductAdapter(newList);
-
+        // Adapter rỗng ban đầu
+        featuredAdapter = new ProductAdapter(new ArrayList<>());
+        newAdapter = new ProductAdapter(new ArrayList<>());
         rvFeaturedProducts.setAdapter(featuredAdapter);
         rvNewProducts.setAdapter(newAdapter);
 
-        btnSearch.setOnClickListener(v -> filterAndUpdate());
+        // Hiển thị sản phẩm ban đầu
+        filterAndUpdate();
 
-        btnCart.setOnClickListener(v -> {
-            startActivity(new Intent(this, CartActivity.class));
-        });
+        // Tìm kiếm
+        btnSearch.setOnClickListener(v -> filterAndUpdate());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CartUtils.updateCartCount(tvCartCount);
     }
 
     private void filterAndUpdate() {
         String keyword = edtSearch.getText().toString().trim().toLowerCase();
-
         List<Product> filtered = new ArrayList<>();
         for (Product p : allProducts) {
-            boolean matchesName = TextUtils.isEmpty(keyword) || p.getName().toLowerCase().contains(keyword);
-            boolean matchesCategory = TextUtils.isEmpty(selectedCategory) || p.getCategory().equalsIgnoreCase(selectedCategory);
-            if (matchesName && matchesCategory) {
-                filtered.add(p);
+            boolean matchName = TextUtils.isEmpty(keyword) || p.getName().toLowerCase().contains(keyword);
+            boolean matchCat = TextUtils.isEmpty(selectedCategory) || p.getCategory().equalsIgnoreCase(selectedCategory);
+            if (matchName && matchCat) {
+                filtered.add(p.clone()); // clone tránh thay đổi trực tiếp
             }
         }
 
-        List<Product> featuredFiltered = new ArrayList<>();
-        List<Product> newFiltered = new ArrayList<>();
-
+        // Tách làm 2 danh sách (6 đầu tiên là nổi bật)
+        List<Product> featuredList = new ArrayList<>();
+        List<Product> newList = new ArrayList<>();
         for (int i = 0; i < filtered.size(); i++) {
-            if (i < 6) featuredFiltered.add(filtered.get(i));
-            else newFiltered.add(filtered.get(i));
+            if (i < 6) featuredList.add(filtered.get(i));
+            else newList.add(filtered.get(i));
         }
 
-        featuredAdapter.updateList(featuredFiltered);
-        newAdapter.updateList(newFiltered);
-    }
-
-    private List<Product> getSampleProducts() {
-        List<Product> products = new ArrayList<>();
-        products.add(new Product("Hoa Hồng Đỏ", R.drawable.anh1, 150000, 135000, "Biểu tượng của tình yêu", 4.8f, 101, "Mặt trời"));
-        products.add(new Product("Hoa Hồng Trắng", R.drawable.anh2, 160000, 145000, "Thanh khiết và trong sáng", 4.6f, 102, "Ánh trăng"));
-        products.add(new Product("Hoa Hồng Vàng", R.drawable.anh3, 155000, 140000, "Tình bạn và niềm vui", 4.7f, 103, "Ngôi sao"));
-        products.add(new Product("Hoa Cẩm Tú Cầu", R.drawable.anh4, 180000, 165000, "Thành ý và biết ơn", 4.5f, 104, "Mặt trắng"));
-        products.add(new Product("Hoa Hướng Dương", R.drawable.anh5, 170000, 155000, "Vươn tới ánh sáng", 4.9f, 105, "Đám mây"));
-        products.add(new Product("Hoa Cẩm Chướng", R.drawable.anh6, 140000, 125000, "Sự ngọt ngào", 4.3f, 106, "Tinh tú"));
-        products.add(new Product("Hoa Lan Hồ Điệp", R.drawable.anh7, 250000, 230000, "Sang trọng và quý phái", 4.9f, 107, "Mặt trời"));
-        products.add(new Product("Hoa Ly", R.drawable.anh8, 200000, 180000, "Sự thanh cao", 4.6f, 108, "Ánh trăng"));
-        products.add(new Product("Hoa Tulip", R.drawable.anh9, 220000, 200000, "Lãng mạn và thanh lịch", 4.7f, 109, "Ngôi sao"));
-        products.add(new Product("Hoa Baby", R.drawable.anh10, 120000, 110000, "Nhẹ nhàng và thuần khiết", 4.2f, 110, "Mặt trắng"));
-        products.add(new Product("Hoa Cúc Mẫu Đơn", R.drawable.anh11, 160000, 145000, "May mắn và phúc lộc", 4.5f, 111, "Đám mây"));
-        products.add(new Product("Hoa Cúc Họa Mi", R.drawable.anh12, 130000, 120000, "Trong sáng tuổi trẻ", 4.4f, 112, "Tinh tú"));
-        return products;
+        featuredAdapter.updateList(featuredList);
+        newAdapter.updateList(newList);
     }
 }

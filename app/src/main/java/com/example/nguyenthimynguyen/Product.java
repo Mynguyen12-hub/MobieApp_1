@@ -6,16 +6,17 @@ public class Product {
     private String name;
     private int imageResId;
     private double price;         // Giá gốc
-    private double salePrice;     // ✅ Giá khuyến mãi
+    private double salePrice;     // Giá khuyến mãi
     private String description;
     private float rating;
     private int sold;
     private int quantity = 1;
     private String category;
+    private int id;               // Mỗi sản phẩm có ID duy nhất
 
-    // ✅ Constructor đầy đủ với salePrice
+    // Constructor đầy đủ, chính xác
     public Product(String name, int imageResId, double price, double salePrice,
-                   String description, float rating, int sold, String category) {
+                   String description, float rating, int sold, int id, String category) {
         this.name = name;
         this.imageResId = imageResId;
         this.price = price;
@@ -23,11 +24,18 @@ public class Product {
         this.description = description;
         this.rating = rating;
         this.sold = sold;
-        this.quantity = 1;
+        this.id = id;
         this.category = category;
     }
 
-    // Getter & Setter cho quantity
+    // Phương thức clone() trả về bản sao Product
+    public Product clone() {
+        Product p = new Product(name, imageResId, price, salePrice, description, rating, sold, id, category);
+        p.setQuantity(this.quantity);
+        return p;
+    }
+
+    // Getter & Setter
     public int getQuantity() {
         return quantity;
     }
@@ -36,7 +44,6 @@ public class Product {
         this.quantity = quantity;
     }
 
-    // Getters khác
     public String getName() {
         return name;
     }
@@ -69,17 +76,20 @@ public class Product {
         return category;
     }
 
-    // ✅ Bổ sung equals() và hashCode() để dùng làm key trong HashMap
+    public int getId() {
+        return id;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof Product)) return false;
         Product other = (Product) obj;
-        return name.equals(other.name) && imageResId == other.imageResId;
+        return id == other.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, imageResId);
+        return Objects.hash(id);
     }
 }
