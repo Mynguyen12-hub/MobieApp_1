@@ -11,10 +11,11 @@ public class Product {
     private float rating;
     private int sold;
     private int quantity = 1;
+    private boolean selected = false; // ✅ Cho phép chọn sản phẩm để áp mã
     private String category;
-    private int id;               // Mỗi sản phẩm có ID duy nhất
+    private int id;
 
-    // Constructor đầy đủ, chính xác
+    // Constructor đầy đủ
     public Product(String name, int imageResId, double price, double salePrice,
                    String description, float rating, int sold, int id, String category) {
         this.name = name;
@@ -28,22 +29,15 @@ public class Product {
         this.category = category;
     }
 
-    // Phương thức clone() trả về bản sao Product
+    // Phương thức clone
     public Product clone() {
         Product p = new Product(name, imageResId, price, salePrice, description, rating, sold, id, category);
         p.setQuantity(this.quantity);
+        p.setSelected(this.selected); // ✅ Copy trạng thái selected
         return p;
     }
 
     // Getter & Setter
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
     public String getName() {
         return name;
     }
@@ -70,6 +64,22 @@ public class Product {
 
     public int getSold() {
         return sold;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
     public String getCategory() {

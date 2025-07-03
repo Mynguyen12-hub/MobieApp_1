@@ -89,13 +89,24 @@
                 android:paddingBottom="6dp" />
 
             <!-- Banner -->
-            <ImageView
-                android:id="@+id/imgBanner"
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPagerBanner"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="160dp"
                 android:layout_marginTop="8dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/banner" />
+                android:clipToPadding="false"
+                android:clipChildren="false"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                app:tabIndicatorColor="#D81B60"
+                app:tabSelectedTextColor="#D81B60"
+                android:layout_marginBottom="12dp" />
 
             <!-- Danh mục -->
             <TextView
@@ -110,9 +121,74 @@
                 android:id="@+id/rvCategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="2dp"
                 android:padding="4dp"
                 android:overScrollMode="never" />
+
+            <!-- 🎁 Mã giảm giá -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎁 Mã giảm giá"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="12dp"
+                android:paddingStart="4dp" />
+
+            <LinearLayout
+                android:id="@+id/layoutDiscounts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tvDiscount5"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="-5%"
+                    android:textStyle="bold"
+                    android:textColor="#B71C1C"
+                    android:background="@drawable/bg_discount"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:id="@+id/tvDiscount10"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="-10%"
+                    android:textStyle="bold"
+                    android:textColor="#1B5E20"
+                    android:background="@drawable/bg_discount"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:id="@+id/tvDiscount25"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="-25%"
+                    android:textStyle="bold"
+                    android:textColor="#0D47A1"
+                    android:background="@drawable/bg_discount" />
+            </LinearLayout>
+
+            <!-- ✅ Nút lưu mã giảm giá -->
+            <Button
+                android:id="@+id/btnSaveDiscount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Lưu mã giảm giá"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="#D81B60"
+                android:textColor="@android:color/white" />
 
             <!-- Sản phẩm mới -->
             <TextView

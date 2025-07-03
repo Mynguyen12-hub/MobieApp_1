@@ -18,35 +18,35 @@ import java.util.List;
 public class CartActivity extends AppCompatActivity {
 
     private RecyclerView rvCart;
-    private TextView txtTotal;
-    private Button btnCheckout;
+    private TextView txtTotal, txtDiscountInfo, txtTotalAfterDiscount;
+    private Button btnCheckout, btnClearAll;
     private CartAdapter adapter;
     private List<Product> cartItems;
+    private String discountCode = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
-        // ✅ Khởi tạo sản phẩm & giỏ hàng
         ProductRepository.initProducts();
         CartManager.init(this);
         cartItems = CartManager.getCart();
 
-        // ✅ Ánh xạ View
         rvCart = findViewById(R.id.rvCart);
         txtTotal = findViewById(R.id.txtTotal);
+        txtDiscountInfo = findViewById(R.id.txtDiscountInfo);
+        txtTotalAfterDiscount = findViewById(R.id.txtTotalAfterDiscount);
         btnCheckout = findViewById(R.id.btnCheckout);
+        btnClearAll = findViewById(R.id.btnClearAll);
 
-        // ✅ Setup RecyclerView
         rvCart.setLayoutManager(new LinearLayoutManager(this));
         adapter = new CartAdapter(cartItems, this::updateTotal);
         rvCart.setAdapter(adapter);
 
-        // ✅ Hiển thị tổng ban đầu
+        loadDiscountCode();
         updateTotal();
 
-        // ✅ Xử lý nút thanh toán
         btnCheckout.setOnClickListener(v -> {
             if (cartItems.isEmpty()) {
                 Toast.makeText(this, "Giỏ hàng trống!", Toast.LENGTH_SHORT).show();
@@ -55,9 +55,15 @@ public class CartActivity extends AppCompatActivity {
             }
         });
 
-        // ✅ Xử lý Bottom Navigation
-        BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);
+        btnClearAll.setOnClickListener(v -> {
+            CartManager.clearCart();
+            cartItems.clear();
+            adapter.notifyDataSetChanged();
+            updateTotal();
+            Toast.makeText(this, "Đã xoá tất cả sản phẩm trong giỏ hàng", Toast.LENGTH_SHORT).show();
+        });
 
+        BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);
         bottomNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_home) {
@@ -82,12 +88,29 @@ public class CartActivity extends AppCompatActivity {
         });
     }
 
+    private void loadDiscountCode() {
+        SharedPreferences prefs = getSharedPreferences("discount_prefs", MODE_PRIVATE);
+        discountCode = prefs.getString("code", "");
+    }
+
     private void updateTotal() {
         double total = 0;
         for (Product product : cartItems) {
-            total += product.getSalePrice() * product.getQuantity();
+            if (product.isSelected()) {
+                total += product.getSalePrice() * product.getQuantity();
+            }
         }
         txtTotal.setText(String.format("Tổng: %,.0f đ", total));
+
+        double discountPercent = 0;
+        if (discountCode.equals("5")) discountPercent = 0.05;
+        else if (discountCode.equals("10")) discountPercent = 0.10;
+        else if (discountCode.equals("25")) discountPercent = 0.25;
+
+        double discounted = total * (1 - discountPercent);
+
+        txtDiscountInfo.setText(discountPercent > 0 ? "Đã áp dụng mã giảm " + discountCode + "%" : "Không có mã giảm giá");
+        txtTotalAfterDiscount.setText(String.format("Tổng sau giảm: %,.0f đ", discounted));
     }
 
     @Override
