@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#FFF0F5"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:padding="24dp">
+
+        <!-- Nút Back và tiêu đề -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/rounded_back_button_bg"
+                android:src="@drawable/ic_back"
+                android:backgroundTint="#E91E63" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Trang cá nhân"
+                android:textColor="#E91E63"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <View
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:visibility="invisible" />
+        </LinearLayout>
+
+        <!-- Avatar -->
+        <FrameLayout
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_marginTop="24dp">
+
+            <ImageView
+                android:id="@+id/imgAvatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:background="@drawable/ic_user"
+                android:src="@drawable/ic_user" />
+
+            <!-- Nút chỉnh avatar -->
+            <ImageView
+                android:id="@+id/btnEditAvatar"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="4dp"
+                android:background="@drawable/rounded_pink_button"
+                android:src="@drawable/ic_edit" />
+
+            <ImageView
+                android:id="@+id/imgQRCode"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:src="@drawable/ic_qr_code"
+                android:layout_marginBottom="24dp"
+                android:scaleType="fitCenter" />
+        </FrameLayout>
+
+        <!-- Tên người dùng -->
+        <TextView
+            android:id="@+id/txtUsername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Admin"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginTop="12dp" />
+
+        <!-- Loại da -->
+        <TextView
+            android:id="@+id/txtSkinType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Normal Skin"
+            android:textColor="#E91E63"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp" />
+
+        <!-- Danh sách chức năng -->
+        <LinearLayout
+            android:id="@+id/layoutMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="vertical">
+
+            <!-- 1. Xem thông tin người dùng -->
+            <LinearLayout
+                android:id="@+id/itemUserInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <include layout="@layout/item_profile_menu" />
+            </LinearLayout>
+
+            <!-- 2. Xem đơn hàng -->
+            <LinearLayout
+                android:id="@+id/itemOrders"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <include layout="@layout/item_profile_menu" />
+            </LinearLayout>
+
+            <!-- 3. Quiz (ví dụ khác) -->
+            <LinearLayout
+                android:id="@+id/itemQuiz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <include layout="@layout/item_profile_menu" />
+            </LinearLayout>
+
+            <!-- 4. Địa chỉ -->
+            <LinearLayout
+                android:id="@+id/itemAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <include layout="@layout/item_profile_menu" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Đăng xuất -->
+        <Button
+            android:id="@+id/btnSignOut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đăng xuất"
+            android:layout_marginTop="24dp"
+            android:textColor="#E91E63"
+            android:paddingHorizontal="32dp"
+            android:paddingVertical="10dp"
+            android:textSize="14sp"
+            android:textAllCaps="false" />
+    </LinearLayout>
+</ScrollView>

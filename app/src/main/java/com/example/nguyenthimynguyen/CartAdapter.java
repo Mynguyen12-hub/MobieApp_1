@@ -1,10 +1,10 @@
 package com.example.nguyenthimynguyen;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,7 +35,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product product = cartItems.get(position);
 
-        holder.imgProduct.setImageResource(product.getImageResId());
+        holder.imgProduct.setImageResource(product.getImageResId(holder.itemView.getContext()));
         holder.txtName.setText(product.getName());
         holder.txtDescription.setText(product.getDescription());
         holder.txtQuantity.setText(String.valueOf(product.getQuantity()));
@@ -43,15 +43,23 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         double itemTotal = product.getSalePrice() * product.getQuantity();
         holder.txtPrice.setText(String.format("%,.0f đ", itemTotal));
 
-        // ✅ Tăng số lượng
+        // ✅ Gán trạng thái checkbox theo product
+        holder.checkboxSelect.setChecked(product.isSelected());
+
+        // ✅ Khi tick checkbox -> cập nhật trạng thái vào product
+        holder.checkboxSelect.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            product.setSelected(isChecked);
+            CartManager.saveCart(); // Lưu lại nếu cần
+            onCartChanged.run();    // Cập nhật tổng tiền
+        });
+
         holder.btnPlus.setOnClickListener(v -> {
             product.setQuantity(product.getQuantity() + 1);
-            CartManager.saveCart(); // Không cần context
+            CartManager.saveCart();
             notifyItemChanged(position);
             onCartChanged.run();
         });
 
-        // ✅ Giảm số lượng
         holder.btnMinus.setOnClickListener(v -> {
             if (product.getQuantity() > 1) {
                 product.setQuantity(product.getQuantity() - 1);
@@ -61,9 +69,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             }
         });
 
-        // ✅ Xóa sản phẩm
         holder.btnRemove.setOnClickListener(v -> {
-            CartManager.removeItem(position); // Chỉ truyền index
+            cartItems.remove(position);
+            CartManager.removeItemById(product.getId());
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, cartItems.size());
             onCartChanged.run();
@@ -75,11 +83,23 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         return cartItems.size();
     }
 
+    // ✅ Lấy danh sách sản phẩm đã chọn
+    public List<Product> getSelectedItems() {
+        List<Product> selected = new java.util.ArrayList<>();
+        for (Product p : cartItems) {
+            if (p.isSelected()) {
+                selected.add(p);
+            }
+        }
+        return selected;
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgProduct;
         TextView txtName, txtDescription, txtQuantity, txtPrice;
         Button btnPlus, btnMinus;
         ImageButton btnRemove;
+        CheckBox checkboxSelect;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -91,6 +111,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             btnPlus = itemView.findViewById(R.id.btnPlus);
             btnMinus = itemView.findViewById(R.id.btnMinus);
             btnRemove = itemView.findViewById(R.id.btnRemoveCartItem);
+            checkboxSelect = itemView.findViewById(R.id.checkboxSelect);
         }
     }
 }

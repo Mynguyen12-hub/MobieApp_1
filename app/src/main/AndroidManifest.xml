@@ -2,6 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.nguyenthimynguyen">
 
+    <!-- Quyền sử dụng Internet để gọi API -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,6 +16,7 @@
         android:theme="@style/Theme.NguyenThiMyNguyen"
         tools:targetApi="31">
 
+        <!-- Màn hình khởi động -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -22,19 +26,21 @@
             </intent-filter>
         </activity>
 
-        <!-- Các màn hình khác -->
+        <!-- Các màn hình chức năng -->
         <activity android:name=".LoginActivity" android:exported="false" />
         <activity android:name=".HomeActivity" android:exported="false" />
         <activity android:name=".RegisterActivity" android:exported="false" />
         <activity android:name=".CartActivity" android:exported="false" />
         <activity android:name=".CheckoutActivity" android:exported="false" />
         <activity android:name=".ProductListActivity" android:exported="false" />
-        <activity android:name=".ChatActivity" android:exported="false" />
+        <activity
+            android:name=".ChatActivity"
+            android:windowSoftInputMode="adjustResize" />
+
         <activity android:name=".UserActivity" android:exported="false" />
         <activity android:name=".ProductDetailActivity" android:exported="false" />
-
-        <!-- ✅ Đã thêm PaymentActivity -->
         <activity android:name=".PaymentActivity" android:exported="false" />
+        <activity android:name=".PaymentMethodActivity" android:exported="false" />
 
     </application>
 </manifest>

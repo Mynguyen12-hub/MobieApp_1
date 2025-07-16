@@ -14,50 +14,37 @@ public class UserActivity extends AppCompatActivity {
 
     ImageView imgAvatar, imgQRCode;
     TextView txtUsername;
-    Button btnOrders, btnServices, btnSettings, btnLogout;
+    Button btnSignOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user);
+        setContentView(R.layout.activity_profile);
 
+        // Ánh xạ View
         imgAvatar = findViewById(R.id.imgAvatar);
         imgQRCode = findViewById(R.id.imgQRCode);
         txtUsername = findViewById(R.id.txtUsername);
+        btnSignOut = findViewById(R.id.btnSignOut);
 
-        btnOrders = findViewById(R.id.btnMyOrder);
-        btnServices = findViewById(R.id.btnMyService);
-        btnSettings = findViewById(R.id.btnSettings);
-        btnLogout = findViewById(R.id.btnLogout);
-
+        // Gán tên người dùng (có thể lấy từ SharedPreferences hoặc API)
         txtUsername.setText("Admin");
 
-        btnOrders.setOnClickListener(v -> {
-            Toast.makeText(this, "Đơn hàng của tôi", Toast.LENGTH_SHORT).show();
-        });
-
-        btnServices.setOnClickListener(v -> {
-            Toast.makeText(this, "Dịch vụ của tôi", Toast.LENGTH_SHORT).show();
-        });
-
-        btnSettings.setOnClickListener(v -> {
-            Toast.makeText(this, "Cài đặt", Toast.LENGTH_SHORT).show();
-        });
-
-        btnLogout.setOnClickListener(v -> {
+        // Xử lý sự kiện Đăng xuất
+        btnSignOut.setOnClickListener(v -> {
             Toast.makeText(this, "Đăng xuất...", Toast.LENGTH_SHORT).show();
 
-            // Xóa dữ liệu đăng nhập trong SharedPreferences "user_data"
+            // Xóa thông tin đăng nhập trong SharedPreferences
             SharedPreferences prefs = getSharedPreferences("user_data", MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
-            editor.clear(); // hoặc editor.remove("isLoggedIn");
+            editor.clear(); // Xóa tất cả
             boolean success = editor.commit();
             if (!success) {
                 Toast.makeText(this, "Lỗi khi xóa dữ liệu đăng nhập", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Chuyển về màn hình đăng nhập và xóa hết activity cũ
+            // Quay lại màn hình đăng nhập và clear toàn bộ activity stack
             Intent intent = new Intent(UserActivity.this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

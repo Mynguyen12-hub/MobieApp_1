@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="120dp"
             android:scaleType="centerCrop"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp" />
 
         <!-- Tên sản phẩm -->
         <TextView
@@ -33,7 +33,7 @@
             android:textSize="14sp"
             android:textColor="#000000"
             android:maxLines="1"
-            android:ellipsize="end"/>
+            android:ellipsize="end" />
 
         <!-- Giá khuyến mãi -->
         <TextView
@@ -93,7 +93,7 @@
                 android:layout_marginStart="8dp" />
         </LinearLayout>
 
-        <!-- ✅ Nút "Mua ngay" + "Xem chi tiết" -->
+        <!-- Nút "Mua ngay" và "Chi tiết" bằng icon -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -102,28 +102,26 @@
             android:layout_marginTop="16dp"
             android:paddingHorizontal="12dp">
 
-            <Button
+            <ImageButton
                 android:id="@+id/btnBuyNow"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="48dp"
-                android:text="Mua ngay"
-                android:textSize="14sp"
-                android:textAllCaps="false"
                 android:background="@drawable/rounded_pink_button"
-                android:textColor="#FFFFFF"
+                android:src="@drawable/buy"
+                android:scaleType="centerInside"
+                android:contentDescription="Mua ngay"
                 android:layout_marginEnd="6dp" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/btnDetail"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="48dp"
-                android:text="Chi tiết"
-                android:textSize="14sp"
-                android:textAllCaps="false"
                 android:background="@drawable/bg_sent_message"
-                android:textColor="#FFFFFF"
+                android:src="@drawable/ic_info"
+                android:scaleType="centerInside"
+                android:contentDescription="Chi tiết"
                 android:layout_marginStart="6dp" />
         </LinearLayout>
     </LinearLayout>

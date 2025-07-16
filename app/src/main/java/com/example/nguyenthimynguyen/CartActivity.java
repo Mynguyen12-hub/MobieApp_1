@@ -29,10 +29,11 @@ public class CartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
-        ProductRepository.initProducts();
+        // Khởi tạo cart
         CartManager.init(this);
         cartItems = CartManager.getCart();
 
+        // Ánh xạ view
         rvCart = findViewById(R.id.rvCart);
         txtTotal = findViewById(R.id.txtTotal);
         txtDiscountInfo = findViewById(R.id.txtDiscountInfo);
@@ -40,21 +41,30 @@ public class CartActivity extends AppCompatActivity {
         btnCheckout = findViewById(R.id.btnCheckout);
         btnClearAll = findViewById(R.id.btnClearAll);
 
+        // RecyclerView setup
         rvCart.setLayoutManager(new LinearLayoutManager(this));
         adapter = new CartAdapter(cartItems, this::updateTotal);
         rvCart.setAdapter(adapter);
 
+        // Load mã giảm giá
         loadDiscountCode();
         updateTotal();
 
+        // Xử lý nút thanh toán
         btnCheckout.setOnClickListener(v -> {
-            if (cartItems.isEmpty()) {
-                Toast.makeText(this, "Giỏ hàng trống!", Toast.LENGTH_SHORT).show();
-            } else {
-                startActivity(new Intent(this, CheckoutActivity.class));
+            List<Product> selectedItems = adapter.getSelectedItems();
+
+            if (selectedItems.isEmpty()) {
+                Toast.makeText(this, "Vui lòng chọn sản phẩm để thanh toán!", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            // Nếu muốn, bạn có thể lưu selectedItems vào Singleton hoặc tạm thời vào CartManager
+            Intent intent = new Intent(this, CheckoutActivity.class);
+            startActivity(intent);
         });
 
+        // Xóa tất cả sản phẩm
         btnClearAll.setOnClickListener(v -> {
             CartManager.clearCart();
             cartItems.clear();
@@ -63,6 +73,7 @@ public class CartActivity extends AppCompatActivity {
             Toast.makeText(this, "Đã xoá tất cả sản phẩm trong giỏ hàng", Toast.LENGTH_SHORT).show();
         });
 
+        // Bottom navigation xử lý điều hướng
         BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);
         bottomNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -94,11 +105,11 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private void updateTotal() {
+        List<Product> selectedItems = adapter.getSelectedItems();
+
         double total = 0;
-        for (Product product : cartItems) {
-            if (product.isSelected()) {
-                total += product.getSalePrice() * product.getQuantity();
-            }
+        for (Product product : selectedItems) {
+            total += product.getSalePrice() * product.getQuantity();
         }
         txtTotal.setText(String.format("Tổng: %,.0f đ", total));
 

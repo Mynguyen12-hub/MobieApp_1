@@ -1,23 +1,30 @@
 package com.example.nguyenthimynguyen;
 
+import android.content.Context;
+
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Objects;
 
 public class Product {
     private String name;
-    private int imageResId;
-    private double price;         // Giá gốc
-    private double salePrice;     // Giá khuyến mãi
+
+    @SerializedName("imageResId") // ✅ ánh xạ đúng với tên trường trong JSON
+    private String imageResId;
+
+    private double price;
+    private double salePrice;
     private String description;
     private float rating;
     private int sold;
     private int quantity = 1;
-    private boolean selected = false; // ✅ Cho phép chọn sản phẩm để áp mã
+    private boolean selected = false;
     private String category;
     private int id;
 
-    // Constructor đầy đủ
-    public Product(String name, int imageResId, double price, double salePrice,
-                   String description, float rating, int sold, int id, String category) {
+    // ✅ Constructor đầy đủ
+    public Product(String name, String imageResId, double price, double salePrice, String description,
+                   float rating, int sold, int id, int quantity, String category) {
         this.name = name;
         this.imageResId = imageResId;
         this.price = price;
@@ -26,23 +33,29 @@ public class Product {
         this.rating = rating;
         this.sold = sold;
         this.id = id;
+        this.quantity = quantity;
         this.category = category;
     }
 
-    // Phương thức clone
+    // ✅ Lấy resource ID ảnh từ tên ảnh
+    public int getImageResId(Context context) {
+        return context.getResources().getIdentifier(imageResId, "drawable", context.getPackageName());
+    }
+
+    // ✅ Clone để tạo bản sao độc lập (dùng khi thêm vào giỏ hàng)
+    @Override
     public Product clone() {
-        Product p = new Product(name, imageResId, price, salePrice, description, rating, sold, id, category);
-        p.setQuantity(this.quantity);
-        p.setSelected(this.selected); // ✅ Copy trạng thái selected
+        Product p = new Product(name, imageResId, price, salePrice, description, rating, sold, id, quantity, category);
+        p.setSelected(this.selected);
         return p;
     }
 
-    // Getter & Setter
+    // ✅ Getter & Setter
     public String getName() {
         return name;
     }
 
-    public int getImageResId() {
+    public String getImageResId() {
         return imageResId;
     }
 
@@ -90,6 +103,7 @@ public class Product {
         return id;
     }
 
+    // ✅ equals & hashCode dựa vào id (để so sánh sản phẩm)
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

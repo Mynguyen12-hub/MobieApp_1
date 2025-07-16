@@ -29,11 +29,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
         ChatMessage msg = messages.get(position);
+
         if (msg.isUser()) {
+            // Hiển thị tin nhắn người dùng
             holder.txtUser.setVisibility(View.VISIBLE);
             holder.txtBot.setVisibility(View.GONE);
             holder.txtUser.setText(msg.getContent());
         } else {
+            // Hiển thị tin nhắn bot
             holder.txtBot.setVisibility(View.VISIBLE);
             holder.txtUser.setVisibility(View.GONE);
             holder.txtBot.setText(msg.getContent());

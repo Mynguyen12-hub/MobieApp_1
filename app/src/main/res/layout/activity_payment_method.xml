@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="#FFF0F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chọn phương thức thanh toán"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+        <RadioGroup
+            android:id="@+id/rgMethod"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/rbMomo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MoMo" />
+
+            <RadioButton
+                android:id="@+id/rbZalo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ZaloPay" />
+
+            <RadioButton
+                android:id="@+id/rbBankTransfer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chuyển khoản ngân hàng" />
+
+            <RadioButton
+                android:id="@+id/rbCreditCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thẻ tín dụng / Ghi nợ" />
+
+            <RadioButton
+                android:id="@+id/rbPaypal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PayPal" />
+
+            <RadioButton
+                android:id="@+id/rbCOD"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thanh toán khi nhận hàng (COD)" />
+        </RadioGroup>
+
+        <!-- Ngân hàng nếu chọn chuyển khoản -->
+        <LinearLayout
+            android:id="@+id/layoutBankOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chọn ngân hàng:"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <RadioGroup
+                android:id="@+id/rgBankOptions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/rbVCB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vietcombank" />
+
+                <RadioButton
+                    android:id="@+id/rbTCB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Techcombank" />
+
+                <RadioButton
+                    android:id="@+id/rbBIDV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BIDV" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnConfirmPayment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Xác nhận"
+            android:backgroundTint="#C2185B"
+            android:textColor="#FFF"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+</ScrollView>

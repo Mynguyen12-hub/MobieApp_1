@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Thông tin giao hàng -->
+        <!-- Tiêu đề -->
         <TextView
             android:text="Thông tin giao hàng"
             android:textSize="18sp"
@@ -20,6 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <!-- Họ tên -->
         <EditText
             android:id="@+id/edtName"
             android:layout_width="match_parent"
@@ -29,6 +30,7 @@
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="12dp" />
 
+        <!-- Số điện thoại -->
         <EditText
             android:id="@+id/edtPhone"
             android:layout_width="match_parent"
@@ -39,6 +41,7 @@
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="12dp" />
 
+        <!-- Địa chỉ -->
         <EditText
             android:id="@+id/edtAddress"
             android:layout_width="match_parent"
@@ -48,6 +51,7 @@
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="12dp" />
 
+        <!-- Ghi chú -->
         <EditText
             android:id="@+id/edtNote"
             android:layout_width="match_parent"
@@ -57,7 +61,7 @@
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="16dp" />
 
-        <!-- Nhập mã giảm giá -->
+        <!-- Mã giảm giá -->
         <EditText
             android:id="@+id/edtVoucher"
             android:layout_width="match_parent"
@@ -76,72 +80,15 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp" />
 
-        <RadioGroup
-            android:id="@+id/rgPaymentMethod"
+        <!-- Nút chọn thanh toán -->
+        <Button
+            android:id="@+id/btnSelectPayment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="8dp">
-
-            <RadioButton
-                android:id="@+id/rbBankTransfer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chuyển khoản ngân hàng" />
-
-            <RadioButton
-                android:id="@+id/rbCreditCard"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Thẻ tín dụng / Ghi nợ" />
-
-            <RadioButton
-                android:id="@+id/rbPaypal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="PayPal" />
-        </RadioGroup>
-
-        <!-- Chọn ngân hàng khi chọn CK ngân hàng -->
-        <LinearLayout
-            android:id="@+id/layoutBankOptions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:layout_marginBottom="12dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chọn ngân hàng:"
-                android:textStyle="bold"
-                android:layout_marginBottom="6dp" />
-
-            <RadioGroup
-                android:id="@+id/rgBankOptions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <RadioButton
-                    android:id="@+id/rbVCB"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Vietcombank" />
-
-                <RadioButton
-                    android:id="@+id/rbTCB"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Techcombank" />
-
-                <RadioButton
-                    android:id="@+id/rbBIDV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="BIDV" />
-            </RadioGroup>
-        </LinearLayout>
+            android:text="Chọn phương thức thanh toán"
+            android:backgroundTint="@color/teal_200"
+            android:textColor="#FFF"
+            android:layout_marginBottom="8dp" />
 
         <!-- Phương thức đã chọn -->
         <TextView
@@ -153,7 +100,7 @@
             android:textStyle="italic"
             android:layout_marginBottom="12dp" />
 
-        <!-- Gợi ý nhỏ -->
+        <!-- Gợi ý -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -162,7 +109,7 @@
             android:textColor="#888888"
             android:layout_marginBottom="12dp" />
 
-        <!-- Danh sách sản phẩm -->
+        <!-- Sản phẩm trong đơn -->
         <TextView
             android:text="Sản phẩm trong đơn hàng"
             android:textStyle="bold"
@@ -171,6 +118,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp" />
 
+        <!-- Danh sách sản phẩm -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvCheckoutProducts"
             android:layout_width="match_parent"

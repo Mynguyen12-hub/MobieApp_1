@@ -1,10 +1,12 @@
 package com.example.nguyenthimynguyen;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.*;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,16 +17,15 @@ public class CheckoutActivity extends AppCompatActivity {
 
     EditText edtName, edtPhone, edtAddress, edtNote;
     TextView tvTotalAmount, tvSelectedPayment;
-    Button btnConfirm;
+    Button btnConfirm, btnSelectPayment;
     RecyclerView rvCheckoutProducts;
-    RadioGroup rgPaymentMethod, rgBankOptions;
-    LinearLayout layoutBankOptions;
 
     CheckoutProductAdapter adapter;
-    List<Product> productList;
+    List<Product> selectedProducts;
 
     String selectedMethod = "";
-    String selectedBank = "";
+
+    private static final int REQUEST_PAYMENT = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,39 +40,37 @@ public class CheckoutActivity extends AppCompatActivity {
         tvTotalAmount = findViewById(R.id.tvTotalAmount);
         tvSelectedPayment = findViewById(R.id.tvSelectedPayment);
         btnConfirm = findViewById(R.id.btnConfirm);
+        btnSelectPayment = findViewById(R.id.btnSelectPayment);
         rvCheckoutProducts = findViewById(R.id.rvCheckoutProducts);
 
-        rgPaymentMethod = findViewById(R.id.rgPaymentMethod);
-        rgBankOptions = findViewById(R.id.rgBankOptions);
-        layoutBankOptions = findViewById(R.id.layoutBankOptions);
+        // Lấy sản phẩm đã chọn
+        selectedProducts = CartManager.getSelectedItems();
+
+        if (selectedProducts == null || selectedProducts.isEmpty()) {
+            Toast.makeText(this, "Không có sản phẩm nào được chọn!", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         // Hiển thị danh sách sản phẩm
-        productList = CartManager.getCart();
-        adapter = new CheckoutProductAdapter(productList);
+        adapter = new CheckoutProductAdapter(selectedProducts);
         rvCheckoutProducts.setLayoutManager(new LinearLayoutManager(this));
         rvCheckoutProducts.setAdapter(adapter);
 
-        // Tổng tiền
-        double total = CartManager.getTotalAmount();
+        // Tính tổng tiền
+        double total = 0;
+        for (Product p : selectedProducts) {
+            total += p.getSalePrice() * p.getQuantity();
+        }
         tvTotalAmount.setText(String.format("Tổng tiền: %,.0f đ", total));
 
-        // Lắng nghe chọn phương thức thanh toán
-        rgPaymentMethod.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId == R.id.rbBankTransfer) {
-                layoutBankOptions.setVisibility(View.VISIBLE);
-                selectedMethod = "Chuyển khoản ngân hàng";
-            } else {
-                layoutBankOptions.setVisibility(View.GONE);
-                if (checkedId == R.id.rbCreditCard) {
-                    selectedMethod = "Thẻ tín dụng / Ghi nợ";
-                } else if (checkedId == R.id.rbPaypal) {
-                    selectedMethod = "PayPal";
-                }
-            }
-            tvSelectedPayment.setText("Phương thức: " + selectedMethod);
+        // Chọn phương thức thanh toán
+        btnSelectPayment.setOnClickListener(v -> {
+            Intent intent = new Intent(CheckoutActivity.this, PaymentMethodActivity.class);
+            startActivityForResult(intent, REQUEST_PAYMENT);
         });
 
-        // Xác nhận đặt hàng
+        // Xác nhận đơn hàng
         btnConfirm.setOnClickListener(v -> {
             String name = edtName.getText().toString().trim();
             String phone = edtPhone.getText().toString().trim();
@@ -87,22 +86,28 @@ public class CheckoutActivity extends AppCompatActivity {
                 return;
             }
 
-            if (selectedMethod.equals("Chuyển khoản ngân hàng")) {
-                int selectedBankId = rgBankOptions.getCheckedRadioButtonId();
-                if (selectedBankId == -1) {
-                    Toast.makeText(this, "Vui lòng chọn ngân hàng", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                RadioButton selectedBankRb = findViewById(selectedBankId);
-                selectedBank = selectedBankRb.getText().toString();
-                selectedMethod += " - " + selectedBank;
-            }
-
             tvSelectedPayment.setText("Phương thức: " + selectedMethod);
 
+            // Thông báo thành công
             Toast.makeText(this, "🎉 Đặt hàng thành công!", Toast.LENGTH_LONG).show();
-            CartManager.clearCart();
+
+            // Xóa các sản phẩm đã chọn khỏi giỏ hàng
+            for (Product p : selectedProducts) {
+                CartManager.removeItemById(p.getId());
+            }
+
+            CartManager.saveCart();
             finish();
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_PAYMENT && resultCode == RESULT_OK && data != null) {
+            selectedMethod = data.getStringExtra("selected_method");
+            tvSelectedPayment.setText("Phương thức: " + selectedMethod);
+        }
     }
 }

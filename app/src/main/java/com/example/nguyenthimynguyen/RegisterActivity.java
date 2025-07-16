@@ -1,14 +1,23 @@
 package com.example.nguyenthimynguyen;
 
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    EditText edtFullName, edtNewUsername, edtEmail, edtNewPassword;
+    CheckBox cbAgreeTerms;
     Button btnSignUp, btnBackToLogin;
 
     @Override
@@ -16,19 +25,65 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        edtFullName = findViewById(R.id.edtFullName);
+        edtNewUsername = findViewById(R.id.edtNewUsername);
+        edtEmail = findViewById(R.id.edtEmail);
+        edtNewPassword = findViewById(R.id.edtNewPassword);
+        cbAgreeTerms = findViewById(R.id.cbAgreeTerms);
         btnSignUp = findViewById(R.id.btnSignUp);
         btnBackToLogin = findViewById(R.id.btnBackToLogin);
 
         btnSignUp.setOnClickListener(v -> {
-            // TODO: Xử lý đăng ký
-            // Sau khi đăng ký xong, quay về màn hình đăng nhập
-            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+            String fullName = edtFullName.getText().toString().trim();
+            String username = edtNewUsername.getText().toString().trim();
+            String email = edtEmail.getText().toString().trim();
+            String password = edtNewPassword.getText().toString().trim();
+
+            if (fullName.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                Toast.makeText(this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (!cbAgreeTerms.isChecked()) {
+                Toast.makeText(this, "Bạn cần đồng ý với điều khoản", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            btnSignUp.setEnabled(false);
+
+            // Gửi dữ liệu lên MockAPI qua Retrofit
+            User user = new User(fullName, username, email, password);
+            UserApi userApi = ApiClient.getClient().create(UserApi.class);
+            Call<User> call = userApi.registerUser(user);
+
+            call.enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    btnSignUp.setEnabled(true);
+                    if (response.isSuccessful()) {
+                        Toast.makeText(RegisterActivity.this, "🎉 Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                        finish();
+                    } else {
+                        Toast.makeText(RegisterActivity.this, "❌ Lỗi: " + response.code(), Toast.LENGTH_LONG).show();
+                        Log.e("RegisterError", "Code: " + response.code());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
+                    btnSignUp.setEnabled(true);
+                    Toast.makeText(RegisterActivity.this, "⚠ Không thể kết nối server", Toast.LENGTH_LONG).show();
+                    Log.e("RegisterFail", t.getMessage(), t);
+                }
+            });
         });
 
-        btnBackToLogin.setOnClickListener(v -> {
-            finish(); // Trở lại màn hình trước (LoginActivity)
-        });
+        btnBackToLogin.setOnClickListener(v -> finish());
     }
 }

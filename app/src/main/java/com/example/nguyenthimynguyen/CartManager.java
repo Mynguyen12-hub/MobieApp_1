@@ -7,104 +7,100 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CartManager {
-    private static final String PREF_NAME = "cart_data";
-    private static final String KEY_CART = "cart_list";
-    private static Context appContext;
-    private static List<Product> cart = new ArrayList<>();
 
+    private static final String PREF_NAME = "cart_prefs";
+    private static final String CART_KEY = "cart_items";
+    private static SharedPreferences sharedPreferences;
+
+    // Danh sách giỏ hàng chính
+    private static List<Product> cartList = new ArrayList<>();
+
+    // Danh sách sản phẩm được chọn (khi thanh toán hoặc "mua ngay")
+    private static List<Product> selectedItems = new ArrayList<>();
+
+    // Khởi tạo SharedPreferences và load dữ liệu
     public static void init(Context context) {
-        appContext = context.getApplicationContext(); // Dùng context toàn app
+        sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         loadCart();
     }
 
+    // Lấy toàn bộ sản phẩm trong giỏ
     public static List<Product> getCart() {
-        return new ArrayList<>(cart); // Trả về bản sao để tránh bị sửa trực tiếp
+        return new ArrayList<>(cartList); // Trả bản sao để tránh thay đổi ngoài ý muốn
     }
 
+    // Thêm sản phẩm vào giỏ
     public static void addItem(Product product) {
-        for (Product p : cart) {
+        for (Product p : cartList) {
             if (p.getId() == product.getId()) {
-                p.setQuantity(p.getQuantity() + product.getQuantity()); // cộng thêm số lượng
+                p.setQuantity(p.getQuantity() + product.getQuantity());
                 saveCart();
                 return;
             }
         }
-        Product copy = product.clone(); // dùng clone để không ảnh hưởng danh sách gốc
-        cart.add(copy);
+        cartList.add(product);
         saveCart();
     }
 
-    public static void removeItem(int index) {
-        if (index >= 0 && index < cart.size()) {
-            cart.remove(index);
-            saveCart();
-        }
+    // Xóa sản phẩm theo ID
+    public static void removeItemById(int productId) {
+        cartList.removeIf(p -> p.getId() == productId);
+        saveCart();
     }
 
+    // Xóa toàn bộ giỏ hàng
     public static void clearCart() {
-        cart.clear();
+        cartList.clear();
         saveCart();
     }
 
+    // Trả danh sách hiện tại
+    public static List<Product> getCartItems() {
+        return cartList;
+    }
     public static int getCartSize() {
-        int total = 0;
-        for (Product p : cart) {
-            total += p.getQuantity();
-        }
-        return total;
+        return cartList.size();
     }
 
+    // Lưu dữ liệu giỏ hàng vào SharedPreferences (thủ công, không dùng Gson)
     public static void saveCart() {
-        if (appContext == null) return;
-
-        SharedPreferences prefs = appContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-
-        StringBuilder sb = new StringBuilder();
-        for (Product p : cart) {
-            sb.append(p.getId()).append("|")
-                    .append(p.getQuantity()).append(";");
+        StringBuilder builder = new StringBuilder();
+        for (Product p : cartList) {
+            builder.append(p.getId()).append(",").append(p.getQuantity()).append(";");
         }
-
-        editor.putString(KEY_CART, sb.toString());
-        editor.apply();
+        sharedPreferences.edit().putString(CART_KEY, builder.toString()).apply();
     }
 
+    // Load dữ liệu từ SharedPreferences
     public static void loadCart() {
-        if (appContext == null) return;
-
-        SharedPreferences prefs = appContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        String saved = prefs.getString(KEY_CART, "");
-
-        cart.clear();
-
+        cartList.clear();
+        String saved = sharedPreferences.getString(CART_KEY, "");
         if (!saved.isEmpty()) {
             String[] items = saved.split(";");
             for (String item : items) {
-                String[] parts = item.split("\\|");
+                String[] parts = item.split(",");
                 if (parts.length == 2) {
                     try {
                         int id = Integer.parseInt(parts[0]);
                         int quantity = Integer.parseInt(parts[1]);
-
-                        Product product = ProductRepository.getProductById(id);
+                        Product product = ProductManager.getProductById(id);
                         if (product != null) {
-                            Product copy = product.clone();
-                            copy.setQuantity(quantity);
-                            cart.add(copy);
+                            product.setQuantity(quantity);
+                            cartList.add(product);
                         }
-                    } catch (NumberFormatException ignored) {}
+                    } catch (Exception ignored) {}
                 }
             }
         }
     }
 
-    // ✅ Hàm tính tổng tiền trong giỏ hàng
-    public static double getTotalAmount() {
-        double total = 0;
-        for (Product p : cart) {
-            total += p.getSalePrice() * p.getQuantity();
-        }
-        return total;
+    // Set sản phẩm được chọn (ví dụ từ giỏ hoặc từ "mua ngay")
+    public static void setSelectedItems(List<Product> items) {
+        selectedItems = items;
+    }
+
+    // Lấy sản phẩm đã chọn (dùng ở CheckoutActivity)
+    public static List<Product> getSelectedItems() {
+        return selectedItems;
     }
 }

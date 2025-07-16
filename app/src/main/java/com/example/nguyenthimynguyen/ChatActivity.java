@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
-;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -30,9 +29,10 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        // ✅ Bottom navigation
         BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);
         bottomNavigation.setSelectedItemId(R.id.nav_chat);
-
         bottomNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_home) {
@@ -48,23 +48,20 @@ public class ChatActivity extends AppCompatActivity {
             return false;
         });
 
-        // Ánh xạ
+        // ✅ Ánh xạ view
         rvMessages = findViewById(R.id.rvMessages);
         edtMessage = findViewById(R.id.edtMessage);
         btnSend = findViewById(R.id.btnSend);
 
-        // Khởi tạo danh sách tin nhắn
+        // ✅ Khởi tạo danh sách tin nhắn và adapter
         messageList = new ArrayList<>();
         chatAdapter = new ChatAdapter(messageList);
 
-        // Thiết lập RecyclerView
         rvMessages.setLayoutManager(new LinearLayoutManager(this));
         rvMessages.setAdapter(chatAdapter);
-
-        // ✅ Thêm hiệu ứng trượt
         rvMessages.setItemAnimator(new SlideInLeftAnimator());
 
-        // Gửi tin nhắn
+        // ✅ Gửi tin nhắn khi click
         btnSend.setOnClickListener(v -> {
             String msg = edtMessage.getText().toString().trim();
             if (!TextUtils.isEmpty(msg)) {
@@ -75,10 +72,22 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void sendMessage(String userMessage) {
-        messageList.add(new ChatMessage(userMessage, true)); // Tin người dùng
-        messageList.add(new ChatMessage("🌼 Cảm ơn bạn đã nhắn tin!", false)); // Phản hồi đơn giản
+        messageList.add(new ChatMessage(userMessage, true)); // Tin nhắn người dùng
 
-        // Cập nhật giao diện
+        // ✅ Danh sách phản hồi ngẫu nhiên
+        String[] autoReplies = {
+                "🌸 Cảm ơn bạn đã nhắn tin!",
+                "🌼 Chúng tôi sẽ phản hồi sớm nhất!",
+                "💐 Bạn cần hỗ trợ gì thêm không?",
+                "🌷 Cảm ơn vì đã ghé thăm shop hoa của chúng tôi!",
+                "🌻 Mình có thể giúp gì cho bạn?",
+                "💐 Xem tất cả sản phẩm trong danh sách nhá"
+        };
+
+        int randomIndex = (int) (Math.random() * autoReplies.length);
+        messageList.add(new ChatMessage(autoReplies[randomIndex], false)); // Phản hồi
+
+        // ✅ Cập nhật UI
         chatAdapter.notifyItemRangeInserted(messageList.size() - 2, 2);
         rvMessages.scrollToPosition(messageList.size() - 1);
     }

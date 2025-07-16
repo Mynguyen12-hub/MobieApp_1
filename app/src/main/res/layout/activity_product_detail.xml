@@ -202,21 +202,21 @@
 
             <!-- Sản phẩm liên quan -->
             <TextView
-                android:text="Sản phẩm liên quan"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="#333"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp" />
+                android:text="Sản phẩm liên quan"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:paddingStart="12dp"
+                android:paddingTop="16dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvRelatedProducts"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:overScrollMode="never"
-                android:nestedScrollingEnabled="false"/>
+                android:layout_height="250dp"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"

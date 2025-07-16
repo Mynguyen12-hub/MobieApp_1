@@ -5,7 +5,6 @@
     android:background="@drawable/anhnen"
     android:padding="24dp">
 
-    <!-- Form đăng ký trắng bo góc -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,159 +29,118 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="24dp" />
 
-        <!-- Họ và tên -->
-        <EditText
-            android:id="@+id/edtFullName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Họ và tên"
-            android:backgroundTint="#F48FB1"
-            android:padding="10dp" />
+            <!-- Họ và tên -->
+            <EditText
+                android:id="@+id/edtFullName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Họ và tên"
+                android:backgroundTint="#F48FB1"
+                android:padding="10dp" />
 
-        <!-- Giới tính -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Giới tính"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:textColor="#D81B60" />
+            <!-- Tên đăng nhập -->
+            <EditText
+                android:id="@+id/edtNewUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Tên đăng nhập"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#F48FB1"
+                android:padding="10dp" />
 
-        <RadioGroup
-            android:id="@+id/rgGender"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp">
+            <!-- Email -->
+            <EditText
+                android:id="@+id/edtEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#F48FB1"
+                android:padding="10dp" />
 
-            <RadioButton
-                android:id="@+id/rbMale"
+            <!-- Mật khẩu -->
+            <EditText
+                android:id="@+id/edtNewPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Mật khẩu (chỉ số)"
+                android:inputType="textPassword"
+
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#F48FB1"
+                android:padding="10dp" />
+
+            <!-- Checkbox điều khoản -->
+            <CheckBox
+                android:id="@+id/cbAgreeTerms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Tôi đồng ý với Điều khoản và Chính sách"
+                android:textColor="#555555" />
+
+            <!-- Nút đăng ký -->
+            <Button
+                android:id="@+id/btnSignUp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Đăng ký"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#F06292"
+                android:layout_marginTop="24dp"
+                android:padding="12dp" />
+
+            <!-- Nút quay lại -->
+            <Button
+                android:id="@+id/btnBackToLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Quay lại đăng nhập"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#E1BEE7"
+                android:textColor="#4A148C"
+                android:padding="12dp" />
+
+            <!-- Mô tả mạng xã hội -->
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nam"
-                android:textColor="#D81B60" />
+                android:text="Hoặc đăng ký bằng tài khoản mạng xã hội"
+                android:textColor="#888888"
+                android:textSize="14sp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="12dp" />
 
-            <RadioButton
-                android:id="@+id/rbFemale"
+            <!-- Social buttons -->
+            <!-- Social buttons -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nữ"
-                android:textColor="#D81B60"
-                android:layout_marginStart="32dp" />
-        </RadioGroup>
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"> <!-- Thêm dòng này -->
 
-        <!-- Ngày sinh -->
-        <EditText
-            android:id="@+id/edtBirthDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Ngày sinh (dd/MM/yyyy)"
-            android:inputType="date"
-            android:layout_marginTop="12dp"
-            android:backgroundTint="#F48FB1"
-            android:padding="10dp" />
+                <ImageView
+                    android:id="@+id/btnGoogle"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_google"
+                    android:layout_marginEnd="16dp" />
 
-        <!-- Tên đăng nhập -->
-        <EditText
-            android:id="@+id/edtNewUsername"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Tên đăng nhập"
-            android:layout_marginTop="12dp"
-            android:backgroundTint="#F48FB1"
-            android:padding="10dp" />
+                <ImageView
+                    android:id="@+id/btnApple"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_apple"
+                    android:layout_marginEnd="16dp" />
 
-        <!-- Email -->
-        <EditText
-            android:id="@+id/edtEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
-            android:layout_marginTop="12dp"
-            android:backgroundTint="#F48FB1"
-            android:padding="10dp" />
-
-        <!-- Mật khẩu -->
-        <EditText
-            android:id="@+id/edtNewPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Mật khẩu"
-            android:inputType="textPassword"
-            android:layout_marginTop="12dp"
-            android:backgroundTint="#F48FB1"
-            android:padding="10dp" />
-
-        <!-- Checkbox điều khoản -->
-        <CheckBox
-            android:id="@+id/cbAgreeTerms"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Tôi đồng ý với Điều khoản và Chính sách"
-            android:textColor="#555555" />
-
-        <!-- Nút đăng ký -->
-        <Button
-            android:id="@+id/btnSignUp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Đăng ký"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#F06292"
-            android:layout_marginTop="24dp"
-            android:padding="12dp" />
-
-        <!-- Nút quay lại -->
-        <Button
-            android:id="@+id/btnBackToLogin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Quay lại đăng nhập"
-            android:layout_marginTop="12dp"
-            android:backgroundTint="#E1BEE7"
-            android:textColor="#4A148C"
-            android:padding="12dp" />
-
-        <!-- Mô tả mạng xã hội -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hoặc đăng ký bằng tài khoản mạng xã hội"
-            android:textColor="#888888"
-            android:textSize="14sp"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Social buttons -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/btnGoogle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_google"
-                android:layout_marginEnd="16dp" />
-
-            <ImageView
-                android:id="@+id/btnApple"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_apple"
-                android:layout_marginEnd="16dp" />
-
-            <ImageView
-                android:id="@+id/btnFacebook"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_facebook" />
-        </LinearLayout>
-
+                <ImageView
+                    android:id="@+id/btnFacebook"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_facebook" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

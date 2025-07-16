@@ -27,98 +27,109 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class HomeActivity extends AppCompatActivity {
 
-    EditText edtSearch;
-    ImageView btnSearch, btnCart;
-    RecyclerView rvNewProducts, rvFeaturedProducts, rvCategory;
-    ProductAdapter featuredAdapter, newAdapter;
-    CategoryAdapter categoryAdapter;
-    List<Product> allProducts;
-    TextView tvAddress, tvCartCount;
-    TextView tvDiscount5, tvDiscount10, tvDiscount25;
-    BottomNavigationView bottomNavigation;
-    String selectedCategory = "";
+    private EditText edtSearch;
+    private ImageView btnSearch, btnCart;
+    private TextView tvCartCount, tvAddress;
+    private TextView tvDiscount5, tvDiscount10, tvDiscount25;
+
+    private RecyclerView rvNewProducts, rvFeaturedProducts, rvCategory;
+    private ProductAdapter featuredAdapter, newAdapter;
+    private CategoryAdapter categoryAdapter;
+
+    private List<Product> allProducts = new ArrayList<>();
+    private String selectedCategory = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        // Khởi tạo giỏ hàng và sản phẩm
         CartManager.init(this);
-        ProductRepository.initProducts();
-        allProducts = ProductRepository.getAllProducts();
 
-        // Ánh xạ view
+        mapViews();
+        setupBanner();
+        setupDiscountListeners();
+        setupBottomNavigation();
+        setupCategoryRecycler();
+        setupProductRecycler();
+        loadProductsFromApi();
+
+        btnSearch.setOnClickListener(v -> filterAndUpdate());
+        btnCart.setOnClickListener(v -> startActivity(new Intent(this, CartActivity.class)));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CartUtils.updateCartCount(tvCartCount);
+    }
+
+    private void mapViews() {
         edtSearch = findViewById(R.id.edtSearch);
         btnSearch = findViewById(R.id.btnSearch);
         btnCart = findViewById(R.id.btnCart);
         tvCartCount = findViewById(R.id.tvCartCount);
-        rvFeaturedProducts = findViewById(R.id.rvFeaturedProducts);
-        rvNewProducts = findViewById(R.id.rvNewProduct);
-        rvCategory = findViewById(R.id.rvCategory);
         tvAddress = findViewById(R.id.tvAddress);
-        bottomNavigation = findViewById(R.id.bottomNavigation);
-
-        // Ánh xạ mã giảm giá
         tvDiscount5 = findViewById(R.id.tvDiscount5);
         tvDiscount10 = findViewById(R.id.tvDiscount10);
         tvDiscount25 = findViewById(R.id.tvDiscount25);
+        rvNewProducts = findViewById(R.id.rvNewProduct);
+        rvFeaturedProducts = findViewById(R.id.rvFeaturedProducts);
+        rvCategory = findViewById(R.id.rvCategory);
 
-        // Sự kiện click mã giảm giá
-        tvDiscount5.setOnClickListener(v -> {
-            saveDiscountCode("5");
-            Toast.makeText(this, "Đã chọn mã giảm 5%", Toast.LENGTH_SHORT).show();
-        });
-
-        tvDiscount10.setOnClickListener(v -> {
-            saveDiscountCode("10");
-            Toast.makeText(this, "Đã chọn mã giảm 10%", Toast.LENGTH_SHORT).show();
-        });
-
-        tvDiscount25.setOnClickListener(v -> {
-            saveDiscountCode("25");
-            Toast.makeText(this, "Đã chọn mã giảm 25%", Toast.LENGTH_SHORT).show();
-        });
-
-        // Cập nhật giỏ hàng ban đầu
-        CartUtils.updateCartCount(tvCartCount);
-
-        // Xử lý click giỏ hàng
-        btnCart.setOnClickListener(v -> startActivity(new Intent(this, CartActivity.class)));
-
-        // Lấy tên người dùng
         SharedPreferences prefs = getSharedPreferences("user_data", MODE_PRIVATE);
         String username = prefs.getString("username", "admin");
-        tvAddress.setText("\uD83D\uDC64 Người dùng: " + username);
+        tvAddress.setText("👤 Người dùng: " + username);
 
-        // Xử lý bottom navigation
-        bottomNavigation.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.nav_home) {
-                return true;
-            } else if (id == R.id.nav_products) {
-                startActivity(new Intent(this, ProductListActivity.class));
-                return true;
-            } else if (id == R.id.nav_chat) {
-                startActivity(new Intent(this, ChatActivity.class));
-                return true;
-            } else if (id == R.id.nav_admin) {
-                startActivity(new Intent(this, UserActivity.class));
-                return true;
-            }
-            return false;
-        });
-
-        // Cập nhật padding hệ thống
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // Banner
+        CartUtils.updateCartCount(tvCartCount);
+    }
+
+    private void setupDiscountListeners() {
+        tvDiscount5.setOnClickListener(v -> selectDiscount("5"));
+        tvDiscount10.setOnClickListener(v -> selectDiscount("10"));
+        tvDiscount25.setOnClickListener(v -> selectDiscount("25"));
+    }
+
+    private void selectDiscount(String code) {
+        SharedPreferences prefs = getSharedPreferences("discount_prefs", MODE_PRIVATE);
+        prefs.edit().putString("code", code).apply();
+        Toast.makeText(this, "🎉 Đã chọn mã giảm " + code + "%", Toast.LENGTH_SHORT).show();
+    }
+
+    private void setupBottomNavigation() {
+        BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);
+        bottomNavigation.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_home) return true;
+            if (id == R.id.nav_products) {
+                startActivity(new Intent(this, ProductListActivity.class));
+                return true;
+            }
+            if (id == R.id.nav_chat) {
+                startActivity(new Intent(this, ChatActivity.class));
+                return true;
+            }
+            if (id == R.id.nav_admin) {
+                startActivity(new Intent(this, UserActivity.class));
+                return true;
+            }
+            return false;
+        });
+    }
+
+    private void setupBanner() {
         ViewPager2 viewPager = findViewById(R.id.viewPagerBanner);
         TabLayout tabIndicator = findViewById(R.id.tabIndicator);
 
@@ -130,12 +141,14 @@ public class HomeActivity extends AppCompatActivity {
 
         BannerAdapter bannerAdapter = new BannerAdapter(bannerImages);
         viewPager.setAdapter(bannerAdapter);
-        new TabLayoutMediator(tabIndicator, viewPager, (tab, position) -> {}).attach();
 
-        // Tự động cuộn banner
+        new TabLayoutMediator(tabIndicator, viewPager, (tab, position) -> {
+        }).attach();
+
         Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             int currentPage = 0;
+
             @Override
             public void run() {
                 if (currentPage >= bannerImages.size()) currentPage = 0;
@@ -144,8 +157,9 @@ public class HomeActivity extends AppCompatActivity {
             }
         };
         handler.postDelayed(runnable, 3000);
+    }
 
-        // Danh mục
+    private void setupCategoryRecycler() {
         rvCategory.setLayoutManager(new GridLayoutManager(this, 4));
         List<Category> categoryList = new ArrayList<>();
         categoryList.add(new Category("Mặt trời"));
@@ -166,39 +180,21 @@ public class HomeActivity extends AppCompatActivity {
                 filterAndUpdate();
             }
         });
-        rvCategory.setAdapter(categoryAdapter);
 
-        // Sản phẩm nổi bật & mới
+        rvCategory.setAdapter(categoryAdapter);
+    }
+
+    private void setupProductRecycler() {
         rvFeaturedProducts.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rvNewProducts.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         featuredAdapter = new ProductAdapter(new ArrayList<>());
         newAdapter = new ProductAdapter(new ArrayList<>());
+
         rvFeaturedProducts.setAdapter(featuredAdapter);
         rvNewProducts.setAdapter(newAdapter);
-
-        // Hiển thị sản phẩm
-        filterAndUpdate();
-
-        // Tìm kiếm
-        btnSearch.setOnClickListener(v -> filterAndUpdate());
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        CartUtils.updateCartCount(tvCartCount);
-    }
-
-    // Lưu mã giảm giá vào SharedPreferences
-    private void saveDiscountCode(String code) {
-        SharedPreferences prefs = getSharedPreferences("discount_prefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("code", code);
-        editor.apply();
-    }
-
-    // Lọc sản phẩm theo từ khóa hoặc danh mục
     private void filterAndUpdate() {
         String keyword = edtSearch.getText().toString().trim().toLowerCase();
         List<Product> filtered = new ArrayList<>();
@@ -219,5 +215,28 @@ public class HomeActivity extends AppCompatActivity {
 
         featuredAdapter.updateList(featuredList);
         newAdapter.updateList(newList);
+    }
+
+    private void loadProductsFromApi() {
+        ProductApi apiService = ApiClient.getClient().create(ProductApi.class);
+        Call<List<Product>> call = apiService.getAllProducts();
+        call.enqueue(new Callback<List<Product>>() {
+            @Override
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                if (response.isSuccessful()) {
+                    allProducts = response.body();
+
+                    // ✅ Ghi lại danh sách sản phẩm để ProductDetailActivity có thể dùng
+                    ProductManager.setProductList(allProducts);
+
+                    filterAndUpdate();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Product>> call, Throwable t) {
+                Toast.makeText(HomeActivity.this, "Lỗi API", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
