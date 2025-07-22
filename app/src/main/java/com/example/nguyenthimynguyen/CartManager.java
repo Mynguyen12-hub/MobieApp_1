@@ -94,13 +94,12 @@ public class CartManager {
         }
     }
 
-    // Set sản phẩm được chọn (ví dụ từ giỏ hoặc từ "mua ngay")
+// Sản phẩm được chọn khi bấm "Mua ngay" hoặc chọn từ giỏ
     public static void setSelectedItems(List<Product> items) {
-        selectedItems = items;
+        selectedItems = new ArrayList<>(items);
     }
 
-    // Lấy sản phẩm đã chọn (dùng ở CheckoutActivity)
     public static List<Product> getSelectedItems() {
-        return selectedItems;
+        return new ArrayList<>(selectedItems);
     }
 }

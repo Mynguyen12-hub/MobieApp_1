@@ -73,10 +73,19 @@ public class PaymentMethodActivity extends AppCompatActivity {
                     return;
                 }
                 RadioButton selectedBank = findViewById(selectedBankId);
-                method = "Chuyển khoản: " + selectedBank.getText().toString();
+                String bankName = selectedBank.getText().toString();
+                method = "Chuyển khoản: " + bankName;
+
+                if (bankName.contains("Vietcombank")) {
+                    // Mở màn hình hiển thị mã QR Vietcombank
+                    Intent intent = new Intent(PaymentMethodActivity.this, BankTransferActivity.class);
+                    intent.putExtra("bank_name", bankName); // Truyền thêm nếu cần
+                    startActivity(intent);
+                    return;
+                }
             }
 
-            // Trả kết quả về
+            // Trả kết quả về nếu không chọn Vietcombank
             Intent resultIntent = new Intent();
             resultIntent.putExtra("selected_method", method);
             setResult(RESULT_OK, resultIntent);

@@ -71,13 +71,16 @@ public class CartActivity extends AppCompatActivity {
         updateTotal();
 
         // Xử lý nút "Thanh toán"
-        btnCheckout.setOnClickListener(v -> {
-            List<Product> selectedItems = adapter.getSelectedItems();
-            if (selectedItems.isEmpty()) {
-                Toast.makeText(this, "Vui lòng chọn sản phẩm để thanh toán!", Toast.LENGTH_SHORT).show();
-            } else {
-                startActivity(new Intent(this, CheckoutActivity.class));
+        btnCheckout.setOnClickListener(view -> {
+            List<Product> selected = adapter.getSelectedItems();  // ✅ Gọi qua biến adapter đã tạo
+
+            ; // giả sử adapter trả về sản phẩm được tích checkbox
+            if (selected.isEmpty()) {
+                Toast.makeText(this, "Vui lòng chọn sản phẩm để thanh toán", Toast.LENGTH_SHORT).show();
+                return;
             }
+            CartManager.setSelectedItems(selected); // chỉ ghi lại sản phẩm tích
+            startActivity(new Intent(CartActivity.this, CheckoutActivity.class));
         });
 
         // Xử lý nút "Xóa tất cả"
