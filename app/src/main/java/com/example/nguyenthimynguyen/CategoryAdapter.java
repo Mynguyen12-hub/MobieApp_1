@@ -3,7 +3,6 @@ package com.example.nguyenthimynguyen;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.graphics.Color;
 
@@ -41,14 +40,21 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
         // Đổi màu theo trạng thái chọn
         if (category.isSelected()) {
-            holder.txtName.setBackgroundResource(R.drawable.bg_category_selected);
+            holder.txtName.setBackgroundResource(R.drawable.bg_category_selected); // bo góc + màu hồng
             holder.txtName.setTextColor(Color.WHITE);
         } else {
-            holder.txtName.setBackgroundResource(R.drawable.bg_category_unselected);
+            holder.txtName.setBackgroundResource(R.drawable.bg_category_unselected); // bo góc + xanh nhạt
             holder.txtName.setTextColor(Color.BLACK);
         }
 
-        holder.itemView.setOnClickListener(v -> listener.onCategoryClick(position));
+        holder.itemView.setOnClickListener(v -> {
+            // Cập nhật trạng thái chọn duy nhất 1 danh mục
+            for (int i = 0; i < categoryList.size(); i++) {
+                categoryList.get(i).setSelected(i == position);
+            }
+            notifyDataSetChanged();
+            listener.onCategoryClick(position);
+        });
     }
 
     @Override

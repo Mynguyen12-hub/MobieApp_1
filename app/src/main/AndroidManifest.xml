@@ -41,6 +41,7 @@
         <activity android:name=".ProductDetailActivity" android:exported="false" />
         <activity android:name=".PaymentActivity" android:exported="false" />
         <activity android:name=".PaymentMethodActivity" android:exported="false" />
+        <activity android:name=".TotalSummaryActivity" />
 
     </application>
 </manifest>

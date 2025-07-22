@@ -3,7 +3,10 @@ package com.example.nguyenthimynguyen;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,52 +22,65 @@ public class CartActivity extends AppCompatActivity {
 
     private RecyclerView rvCart;
     private TextView txtTotal, txtDiscountInfo, txtTotalAfterDiscount;
+    private TextView txtTotalQuantity, txtTotalPrice;
     private Button btnCheckout, btnClearAll;
     private CartAdapter adapter;
     private List<Product> cartItems;
     private String discountCode = "";
+
+    private LinearLayout layoutTotalDetails, layoutTotalToggle;
+    private ImageView imgToggleArrow;
+    private boolean isExpanded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
-        // Khởi tạo cart
+        // Khởi tạo CartManager
         CartManager.init(this);
         cartItems = CartManager.getCart();
 
-        // Ánh xạ view
+        // Ánh xạ các view
         rvCart = findViewById(R.id.rvCart);
         txtTotal = findViewById(R.id.txtTotal);
         txtDiscountInfo = findViewById(R.id.txtDiscountInfo);
         txtTotalAfterDiscount = findViewById(R.id.txtTotalAfterDiscount);
+        txtTotalQuantity = findViewById(R.id.txtTotalQuantity);
+        txtTotalPrice = findViewById(R.id.txtTotalPrice);
         btnCheckout = findViewById(R.id.btnCheckout);
         btnClearAll = findViewById(R.id.btnClearAll);
+        layoutTotalDetails = findViewById(R.id.layout_total_details);
+        layoutTotalToggle = findViewById(R.id.layout_total_toggle);
+        imgToggleArrow = findViewById(R.id.imgToggleArrow);
 
-        // RecyclerView setup
+        // Thiết lập RecyclerView
         rvCart.setLayoutManager(new LinearLayoutManager(this));
         adapter = new CartAdapter(cartItems, this::updateTotal);
         rvCart.setAdapter(adapter);
 
-        // Load mã giảm giá
+        // Toggle chi tiết tổng tiền
+        layoutTotalToggle.setOnClickListener(v -> {
+            isExpanded = !isExpanded;
+            layoutTotalDetails.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+            imgToggleArrow.setImageResource(isExpanded ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down);
+        });
+
+        // Tải mã giảm giá và cập nhật tổng
         loadDiscountCode();
         updateTotal();
 
-        // Xử lý nút thanh toán
+        // Xử lý nút "Thanh toán"
         btnCheckout.setOnClickListener(v -> {
             List<Product> selectedItems = adapter.getSelectedItems();
-
             if (selectedItems.isEmpty()) {
                 Toast.makeText(this, "Vui lòng chọn sản phẩm để thanh toán!", Toast.LENGTH_SHORT).show();
-                return;
+            } else {
+                startActivity(new Intent(this, CheckoutActivity.class));
             }
-
-            // Nếu muốn, bạn có thể lưu selectedItems vào Singleton hoặc tạm thời vào CartManager
-            Intent intent = new Intent(this, CheckoutActivity.class);
-            startActivity(intent);
         });
 
-        // Xóa tất cả sản phẩm
+        // Xử lý nút "Xóa tất cả"
         btnClearAll.setOnClickListener(v -> {
             CartManager.clearCart();
             cartItems.clear();
@@ -73,7 +89,7 @@ public class CartActivity extends AppCompatActivity {
             Toast.makeText(this, "Đã xoá tất cả sản phẩm trong giỏ hàng", Toast.LENGTH_SHORT).show();
         });
 
-        // Bottom navigation xử lý điều hướng
+        // Bottom navigation
         BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);
         bottomNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -107,21 +123,30 @@ public class CartActivity extends AppCompatActivity {
     private void updateTotal() {
         List<Product> selectedItems = adapter.getSelectedItems();
 
+        int totalQuantity = 0;
         double total = 0;
+
         for (Product product : selectedItems) {
+            totalQuantity += product.getQuantity();
             total += product.getSalePrice() * product.getQuantity();
         }
+
         txtTotal.setText(String.format("Tổng: %,.0f đ", total));
+        txtTotalQuantity.setText("Số lượng: " + totalQuantity);
+        txtTotalPrice.setText(String.format("Tổng tiền: %,.0f đ", total));
 
         double discountPercent = 0;
         if (discountCode.equals("5")) discountPercent = 0.05;
         else if (discountCode.equals("10")) discountPercent = 0.10;
         else if (discountCode.equals("25")) discountPercent = 0.25;
 
-        double discounted = total * (1 - discountPercent);
+        double finalPrice = total * (1 - discountPercent);
 
-        txtDiscountInfo.setText(discountPercent > 0 ? "Đã áp dụng mã giảm " + discountCode + "%" : "Không có mã giảm giá");
-        txtTotalAfterDiscount.setText(String.format("Tổng sau giảm: %,.0f đ", discounted));
+        txtDiscountInfo.setText(discountPercent > 0
+                ? "Đã áp dụng mã giảm " + discountCode + "%"
+                : "Không có mã giảm giá");
+
+        txtTotalAfterDiscount.setText(String.format("Tổng sau giảm: %,.0f đ", finalPrice));
     }
 
     @Override
