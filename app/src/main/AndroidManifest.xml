@@ -42,6 +42,8 @@
         <activity android:name=".PaymentActivity" android:exported="false" />
         <activity android:name=".PaymentMethodActivity" android:exported="false" />
         <activity android:name=".BankTransferActivity" android:exported="false"/>
+        <activity android:name=".UserInfoActivity" />
+
 
 
     </application>

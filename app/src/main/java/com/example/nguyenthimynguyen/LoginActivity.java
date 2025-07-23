@@ -79,12 +79,16 @@ public class LoginActivity extends AppCompatActivity {
                     for (User user : userList) {
                         if (user.getEmail().equals(email) && user.getPassword().equals(password)) {
                             found = true;
-                            prefs.edit().putBoolean("isLoggedIn", true).apply();
+                            prefs.edit()
+                                    .putBoolean("isLoggedIn", true)
+                                    .putString("username", user.getUsername())  // lưu username để dùng khi cần
+                                    .apply();
                             Toast.makeText(LoginActivity.this, "✅ Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                             finish();
                             break;
                         }
+
                     }
 
                     if (!found) {

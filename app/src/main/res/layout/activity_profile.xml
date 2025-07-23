@@ -11,7 +11,7 @@
         android:gravity="center_horizontal"
         android:padding="24dp">
 
-        <!-- Nút Back và tiêu đề -->
+        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,8 +22,8 @@
                 android:id="@+id/btnBack"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:background="@drawable/rounded_back_button_bg"
                 android:src="@drawable/ic_back"
+                android:background="@drawable/rounded_back_button_bg"
                 android:backgroundTint="#E91E63" />
 
             <TextView
@@ -52,30 +52,29 @@
                 android:id="@+id/imgAvatar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:background="@drawable/ic_user"
-                android:src="@drawable/ic_user" />
+                android:src="@drawable/ic_user"
+                android:scaleType="centerCrop" />
 
-            <!-- Nút chỉnh avatar -->
             <ImageView
                 android:id="@+id/btnEditAvatar"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="bottom|end"
                 android:layout_margin="4dp"
-                android:background="@drawable/rounded_pink_button"
-                android:src="@drawable/ic_edit" />
-
-            <ImageView
-                android:id="@+id/imgQRCode"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
-                android:src="@drawable/ic_qr_code"
-                android:layout_marginBottom="24dp"
-                android:scaleType="fitCenter" />
+                android:src="@drawable/ic_edit"
+                android:background="@drawable/rounded_pink_button" />
         </FrameLayout>
 
-        <!-- Tên người dùng -->
+        <!-- QR Code -->
+        <ImageView
+            android:id="@+id/imgQRCode"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:src="@drawable/ic_qr_code"
+            android:layout_marginTop="16dp"
+            android:scaleType="fitCenter" />
+
+        <!-- Thông tin người dùng -->
         <TextView
             android:id="@+id/txtUsername"
             android:layout_width="wrap_content"
@@ -86,7 +85,6 @@
             android:textColor="#333333"
             android:layout_marginTop="12dp" />
 
-        <!-- Loại da -->
         <TextView
             android:id="@+id/txtSkinType"
             android:layout_width="wrap_content"
@@ -96,46 +94,57 @@
             android:textSize="14sp"
             android:layout_marginTop="4dp" />
 
-        <!-- Danh sách chức năng -->
-        <LinearLayout
-            android:id="@+id/layoutMenu"
+        <!-- Editable Fields -->
+        <EditText android:id="@+id/edtFullName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:orientation="vertical">
+            android:hint="Họ tên"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#E91E63"/>
 
-            <!-- 1. Xem thông tin người dùng -->
-            <LinearLayout
-                android:id="@+id/itemUserInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <include layout="@layout/item_profile_menu" />
-            </LinearLayout>
+        <EditText android:id="@+id/edtEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:layout_marginTop="4dp"
+            android:backgroundTint="#E91E63"/>
 
-            <!-- 2. Xem đơn hàng -->
-            <LinearLayout
-                android:id="@+id/itemOrders"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <include layout="@layout/item_profile_menu" />
-            </LinearLayout>
+        <EditText android:id="@+id/edtPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Số điện thoại"
+            android:inputType="phone"
+            android:layout_marginTop="4dp"
+            android:backgroundTint="#E91E63"/>
 
-            <!-- 3. Quiz (ví dụ khác) -->
-            <LinearLayout
-                android:id="@+id/itemQuiz"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <include layout="@layout/item_profile_menu" />
-            </LinearLayout>
 
-            <!-- 4. Địa chỉ -->
-            <LinearLayout
-                android:id="@+id/itemAddress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <include layout="@layout/item_profile_menu" />
-            </LinearLayout>
-        </LinearLayout>
+
+        <EditText android:id="@+id/edtAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Địa chỉ"
+            android:layout_marginTop="4dp"
+            android:backgroundTint="#E91E63"/>
+
+        <EditText android:id="@+id/edtSkinType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Loại da"
+            android:inputType="text"
+            android:layout_marginTop="4dp"
+            android:backgroundTint="#E91E63"/>
+
+        <!-- Nút cập nhật -->
+        <Button
+            android:id="@+id/btnUpdateProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cập nhật"
+            android:layout_marginTop="12dp"
+            android:textAllCaps="false"
+            android:backgroundTint="#E91E63"
+            android:textColor="#FFF" />
 
         <!-- Đăng xuất -->
         <Button
@@ -145,9 +154,6 @@
             android:text="Đăng xuất"
             android:layout_marginTop="24dp"
             android:textColor="#E91E63"
-            android:paddingHorizontal="32dp"
-            android:paddingVertical="10dp"
-            android:textSize="14sp"
             android:textAllCaps="false" />
     </LinearLayout>
 </ScrollView>

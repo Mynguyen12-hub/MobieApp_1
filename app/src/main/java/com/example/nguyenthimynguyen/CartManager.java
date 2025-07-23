@@ -24,6 +24,7 @@ public class CartManager {
         loadCart();
     }
 
+
     // Lấy toàn bộ sản phẩm trong giỏ
     public static List<Product> getCart() {
         return new ArrayList<>(cartList); // Trả bản sao để tránh thay đổi ngoài ý muốn
@@ -61,6 +62,9 @@ public class CartManager {
     public static int getCartSize() {
         return cartList.size();
     }
+    public static List<Product> getCartList() {
+        return new ArrayList<>(cartList); // trả về bản sao để tránh sửa trực tiếp
+    }
 
     // Lưu dữ liệu giỏ hàng vào SharedPreferences (thủ công, không dùng Gson)
     public static void saveCart() {
@@ -69,6 +73,11 @@ public class CartManager {
             builder.append(p.getId()).append(",").append(p.getQuantity()).append(";");
         }
         sharedPreferences.edit().putString(CART_KEY, builder.toString()).apply();
+    }
+    public static void removeSelectedItems() {
+        cartList.removeAll(selectedItems);
+        selectedItems.clear();
+        saveCart();
     }
 
     // Load dữ liệu từ SharedPreferences

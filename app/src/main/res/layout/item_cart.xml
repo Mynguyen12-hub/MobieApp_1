@@ -69,35 +69,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center"
             android:layout_marginTop="6dp">
 
             <Button
                 android:id="@+id/btnMinus"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:text="-"
-                android:textSize="16sp"
-                app:backgroundTint="#FCE4EC"
-                android:textColor="#E91E63"
+                android:backgroundTint="#cccccc"
+                android:textColor="@android:color/black"
                 android:layout_marginEnd="4dp" />
 
             <TextView
                 android:id="@+id/txtCartQuantity"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="1"
                 android:textSize="16sp"
-                android:textColor="#333333" />
+                android:textStyle="bold"
+                android:layout_marginHorizontal="8dp"
+                android:textColor="@android:color/black" />
 
             <Button
                 android:id="@+id/btnPlus"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:text="+"
-                android:textSize="16sp"
-                app:backgroundTint="#FCE4EC"
-                android:textColor="#E91E63"
+                android:backgroundTint="#cccccc"
+                android:textColor="@android:color/black"
                 android:layout_marginStart="4dp" />
         </LinearLayout>
     </LinearLayout>

@@ -1,40 +1,35 @@
 package com.example.nguyenthimynguyen;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.util.Log;
 import android.widget.*;
-import androidx.annotation.Nullable;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import java.io.IOException;
 
-import com.example.nguyenthimynguyen.CartManager;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import okhttp3.*;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CheckoutActivity extends AppCompatActivity {
 
-    EditText edtName, edtPhone, edtAddress, edtNote;
-    TextView tvTotalAmount, tvSelectedPayment;
-    Button btnConfirm, btnSelectPayment;
-    RecyclerView rvCheckoutProducts;
+    private EditText txtFullName, txtPhone, txtAddress, edtNote, edtVoucher;
+    private TextView tvTotalAmount, tvSelectedPayment;
+    private RecyclerView rvCheckoutProducts;
+    private Button btnSelectPayment, btnConfirm;
 
-    CheckoutProductAdapter adapter;
-    List<Product> selectedProducts;
-    String selectedMethod = "";
+    private List<Product> checkoutList = new ArrayList<>();
+    private CheckoutProductAdapter adapter;
 
-    private static final int REQUEST_PAYMENT = 101;
+    private String selectedPayment = "";
 
-    // THAY URL CỦA GOOGLE SCRIPT CỦA BẠN TẠI ĐÂY:
-    private static final String GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxZNkEceyINX5eyjbO2rWGsQrk-ex54_U2OJZKHaM-xXQ8zznZMzi3OQJHkzwBRJqAY2Q/exec";
+    private static final int REQUEST_PAYMENT_METHOD = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,140 +37,137 @@ public class CheckoutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_checkout);
 
         // Ánh xạ view
-        edtName = findViewById(R.id.edtName);
-        edtPhone = findViewById(R.id.edtPhone);
-        edtAddress = findViewById(R.id.edtAddress);
+        txtFullName = findViewById(R.id.txtFullName);
+        txtPhone = findViewById(R.id.txtPhone);
+        txtAddress = findViewById(R.id.txtAddress);
         edtNote = findViewById(R.id.edtNote);
-        tvTotalAmount = findViewById(R.id.tvTotalAmount);
+        edtVoucher = findViewById(R.id.edtVoucher);
+        tvTotalAmount = findViewById(R.id.txtTotal);
         tvSelectedPayment = findViewById(R.id.tvSelectedPayment);
-        btnConfirm = findViewById(R.id.btnConfirm);
-        btnSelectPayment = findViewById(R.id.btnSelectPayment);
         rvCheckoutProducts = findViewById(R.id.rvCheckoutProducts);
+        btnSelectPayment = findViewById(R.id.btnSelectPayment);
+        btnConfirm = findViewById(R.id.btnConfirm);
 
-        rvCheckoutProducts.setLayoutManager(new LinearLayoutManager(this));
-
-        // Lấy sản phẩm từ giỏ hàng hoặc "Mua ngay"
-        selectedProducts = new ArrayList<>();
-        Intent intent = getIntent();
-        Product buyNowProduct = (Product) intent.getSerializableExtra("BUY_NOW_PRODUCT");
+        // Lấy sản phẩm từ intent nếu là mua ngay
+        Product buyNowProduct = (Product) getIntent().getSerializableExtra("buyNowProduct");
 
         if (buyNowProduct != null) {
-            selectedProducts.add(buyNowProduct);
+            checkoutList.add(buyNowProduct);
         } else {
-            selectedProducts = CartManager.getSelectedItems();
+            checkoutList.addAll(CartManager.getSelectedItems());
         }
 
-        if (selectedProducts == null || selectedProducts.isEmpty()) {
-            Toast.makeText(this, "Không có sản phẩm nào!", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
-        adapter = new CheckoutProductAdapter(selectedProducts);
+        // Hiển thị danh sách sản phẩm
+        adapter = new CheckoutProductAdapter(checkoutList);
+        rvCheckoutProducts.setLayoutManager(new LinearLayoutManager(this));
         rvCheckoutProducts.setAdapter(adapter);
 
         // Tính tổng tiền
-        double total = 0;
-        for (Product p : selectedProducts) {
-            total += p.getSalePrice() * p.getQuantity();
-        }
-        double finalTotal = total;
-        tvTotalAmount.setText(String.format("Tổng tiền: %,.0f đ", total));
+        updateTotalAmount();
+
+        // Tải thông tin người dùng từ API
+        loadUserInfoFromApi();
 
         // Chọn phương thức thanh toán
         btnSelectPayment.setOnClickListener(v -> {
-            Intent i = new Intent(CheckoutActivity.this, PaymentMethodActivity.class);
-            startActivityForResult(i, REQUEST_PAYMENT);
+            Intent intent = new Intent(CheckoutActivity.this, PaymentMethodActivity.class);
+            startActivityForResult(intent, REQUEST_PAYMENT_METHOD);
         });
 
-        // Xác nhận đơn hàng
+        // Xác nhận đặt hàng
         btnConfirm.setOnClickListener(v -> {
-            String name = edtName.getText().toString().trim();
-            String phone = edtPhone.getText().toString().trim();
-            String address = edtAddress.getText().toString().trim();
-
-            if (!validateFields()) return;
-
-            if (TextUtils.isEmpty(selectedMethod)) {
-                Toast.makeText(this, "Vui lòng chọn phương thức thanh toán", Toast.LENGTH_SHORT).show();
-                return;
+            if (validateInput()) {
+                Toast.makeText(this, "Đặt hàng thành công!", Toast.LENGTH_SHORT).show();
+                if (buyNowProduct == null) {
+                    CartManager.removeSelectedItems();
+                }
+                finish();
             }
-
-            // Gửi lên Google Sheet
-            sendOrderToGoogleSheet(name, phone, address, selectedProducts, finalTotal);
-
-            tvSelectedPayment.setText("Phương thức: " + selectedMethod);
         });
     }
 
-    private boolean validateFields() {
-        if (edtName.getText().toString().isEmpty() ||
-                edtPhone.getText().toString().isEmpty() ||
-                edtAddress.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+    private void updateTotalAmount() {
+        double total = 0;
+        for (Product p : checkoutList) {
+            total += p.getSalePrice() * p.getQuantity();
+        }
+        tvTotalAmount.setText(String.format("Tổng tiền: %,.0f đ", total));
+    }
+
+    private void loadUserInfoFromApi() {
+        SharedPreferences prefs = getSharedPreferences("user_data", MODE_PRIVATE);
+        String loggedUsername = prefs.getString("username", null);
+
+        Log.d("CheckoutActivity", "Username từ SharedPreferences: " + loggedUsername);
+
+        if (loggedUsername == null) {
+            Log.e("CheckoutActivity", "Không tìm thấy username trong SharedPreferences");
+            return;
+        }
+
+        UserApi userApi = ApiClient.getClient().create(UserApi.class);
+        userApi.getAllUsers().enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<User> userList = response.body();
+                    Log.d("CheckoutActivity", "Số lượng user trả về: " + userList.size());
+
+                    for (User user : userList) {
+                        Log.d("CheckoutActivity", "User từ API: " + user.getUsername() + ", fullName: " + user.getFullName());
+
+                        if (user.getUsername() != null && loggedUsername != null &&
+                                user.getUsername().trim().equalsIgnoreCase(loggedUsername.trim())) {
+
+                            Log.d("CheckoutActivity", "Tìm thấy user phù hợp: " + user.getFullName());
+
+                            txtFullName.setText(user.getFullName());
+                            txtPhone.setText(user.getPhone());
+                            txtAddress.setText(user.getAddress());
+                            return;
+                        }
+                    }
+
+                    Log.e("CheckoutActivity", "Không tìm thấy user phù hợp với username: " + loggedUsername);
+                } else {
+                    Log.e("CheckoutActivity", "API trả về lỗi hoặc rỗng: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                Log.e("CheckoutActivity", "Lỗi khi gọi API getAllUsers", t);
+                Toast.makeText(CheckoutActivity.this, "Lỗi tải thông tin người dùng", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private boolean validateInput() {
+        if (txtFullName.getText().toString().trim().isEmpty()) {
+            txtFullName.setError("Vui lòng nhập họ tên");
+            return false;
+        }
+        if (txtPhone.getText().toString().trim().isEmpty()) {
+            txtPhone.setError("Vui lòng nhập số điện thoại");
+            return false;
+        }
+        if (txtAddress.getText().toString().trim().isEmpty()) {
+            txtAddress.setError("Vui lòng nhập địa chỉ");
+            return false;
+        }
+        if (selectedPayment.isEmpty()) {
+            Toast.makeText(this, "Vui lòng chọn phương thức thanh toán", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
     }
 
-    private void sendOrderToGoogleSheet(String name, String phone, String address,
-                                        List<Product> productList, double totalAmount) {
-        try {
-            JSONArray productsArray = new JSONArray();
-            for (Product p : productList) {
-                JSONObject item = new JSONObject();
-                item.put("tenSanPham", p.getName());
-                item.put("soLuong", p.getQuantity());
-                item.put("gia", p.getSalePrice());
-                productsArray.put(item);
-            }
-
-            JSONObject data = new JSONObject();
-            data.put("tenKhachHang", name);
-            data.put("soDienThoai", phone);
-            data.put("diaChi", address);
-            data.put("sanPham", productsArray.toString());  // convert mảng thành chuỗi
-            data.put("tongTien", totalAmount);
-            data.put("thoiGian", new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(new Date()));
-            data.put("phuongThuc", selectedMethod);
-
-            RequestBody body = RequestBody.create(MediaType.parse("application/json"), data.toString());
-
-            Request request = new Request.Builder()
-                    .url(GOOGLE_SHEET_URL)
-                    .post(body)
-                    .build();
-
-            OkHttpClient client = new OkHttpClient();
-            client.newCall(request).enqueue(new Callback() {
-                @Override public void onFailure(Call call, IOException e) {
-                    runOnUiThread(() ->
-                            Toast.makeText(CheckoutActivity.this, "Lỗi gửi dữ liệu", Toast.LENGTH_SHORT).show()
-                    );
-                }
-
-                @Override public void onResponse(Call call, Response response) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(CheckoutActivity.this, "🎉 Đặt hàng thành công!", Toast.LENGTH_LONG).show();
-                        CartManager.clearCart();
-                        finish();
-                    });
-                }
-            });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Lỗi xử lý đơn hàng", Toast.LENGTH_SHORT).show();
-        }
-    }
-
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_PAYMENT && resultCode == RESULT_OK && data != null) {
-            selectedMethod = data.getStringExtra("selected_method");
-            tvSelectedPayment.setText("Phương thức: " + selectedMethod);
+        if (requestCode == REQUEST_PAYMENT_METHOD && resultCode == RESULT_OK && data != null) {
+            selectedPayment = data.getStringExtra("selected_method");
+            tvSelectedPayment.setText("Phương thức: " + selectedPayment);
         }
     }
 }

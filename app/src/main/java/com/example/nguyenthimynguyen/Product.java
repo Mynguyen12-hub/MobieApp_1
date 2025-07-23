@@ -5,8 +5,10 @@ import android.content.Context;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Objects;
+import java.io.Serializable;
 
-public class Product {
+public class Product implements Serializable {
+
     private String name;
 
     @SerializedName("imageResId") // ✅ ánh xạ đúng với tên trường trong JSON

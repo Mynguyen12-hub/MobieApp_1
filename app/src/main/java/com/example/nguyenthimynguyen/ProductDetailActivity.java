@@ -30,6 +30,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
 
+        // Ánh xạ view
         imgProduct = findViewById(R.id.imgProduct);
         txtProductName = findViewById(R.id.txtProductName);
         txtProductDescription = findViewById(R.id.txtProductDescription);
@@ -45,6 +46,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         btnChat = findViewById(R.id.btnChat);
         rvRelated = findViewById(R.id.rvRelatedProducts);
 
+        // Lấy ID sản phẩm được truyền vào
         int productId = getIntent().getIntExtra("product_id", -1);
         if (productId == -1) {
             Toast.makeText(this, "Không tìm thấy sản phẩm", Toast.LENGTH_SHORT).show();
@@ -59,18 +61,20 @@ public class ProductDetailActivity extends AppCompatActivity {
             return;
         }
 
+        // Mặc định số lượng = 1
         currentProduct.setQuantity(1);
         txtQuantity.setText("1");
 
+        // Hiển thị ảnh
         int imageResId = getResources().getIdentifier(
                 currentProduct.getImageResId(), "drawable", getPackageName());
-
         if (imageResId != 0) {
             imgProduct.setImageResource(imageResId);
         } else {
-            imgProduct.setImageResource(R.drawable.anh1);
+            imgProduct.setImageResource(R.drawable.anh1); // fallback ảnh mặc định
         }
 
+        // Hiển thị thông tin sản phẩm
         txtProductName.setText(currentProduct.getName());
         txtProductDescription.setText(currentProduct.getDescription());
         txtProductSalePrice.setText(String.format("%,.0f đ", currentProduct.getSalePrice()));
@@ -82,6 +86,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             txtProductOriginalPrice.setText(String.format("%,.0f đ", currentProduct.getPrice()));
         }
 
+        // Tăng giảm số lượng
         btnIncrease.setOnClickListener(v -> {
             int quantity = currentProduct.getQuantity();
             currentProduct.setQuantity(quantity + 1);
@@ -96,23 +101,27 @@ public class ProductDetailActivity extends AppCompatActivity {
             }
         });
 
+        // Thêm vào giỏ hàng
         btnAddToCart.setOnClickListener(v -> {
-            CartManager.addItem(currentProduct);
-            CartUtils.updateCartCount(null);
+            CartManager.addItem(currentProduct.clone()); // clone để tránh ảnh hưởng đối tượng gốc
+            CartUtils.updateCartCount(null); // nếu bạn có icon đếm giỏ
             Toast.makeText(this, "✅ Đã thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
         });
 
+        // Mua ngay
         btnBuyNow.setOnClickListener(v -> {
-            CartManager.clearCart();
-            CartManager.addItem(currentProduct);
-            CartUtils.updateCartCount(null);
-            startActivity(new Intent(this, CartActivity.class));
+            Intent intent = new Intent(ProductDetailActivity.this, CheckoutActivity.class);
+            intent.putExtra("buy_now", true);
+            intent.putExtra("buyNowProduct", currentProduct.clone()); // clone để tránh thay đổi dữ liệu gốc
+            startActivity(intent);
         });
 
+        // Điều hướng
         btnBack.setOnClickListener(v -> finish());
         btnCart.setOnClickListener(v -> startActivity(new Intent(this, CartActivity.class)));
         btnChat.setOnClickListener(v -> startActivity(new Intent(this, ChatActivity.class)));
 
+        // Sản phẩm liên quan
         setupRelatedProducts();
     }
 
@@ -120,7 +129,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         List<Product> related = ProductManager.getProductsByCategory(currentProduct.getCategory());
         related.removeIf(p -> p.getId() == currentProduct.getId());
 
-        relatedAdapter = new RelatedProductAdapter(related); // ✅ đúng
+        relatedAdapter = new RelatedProductAdapter(related);
         rvRelated.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rvRelated.setAdapter(relatedAdapter);
     }

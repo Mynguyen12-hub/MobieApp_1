@@ -79,13 +79,13 @@ public class PaymentMethodActivity extends AppCompatActivity {
                 if (bankName.contains("Vietcombank")) {
                     // Mở màn hình hiển thị mã QR Vietcombank
                     Intent intent = new Intent(PaymentMethodActivity.this, BankTransferActivity.class);
-                    intent.putExtra("bank_name", bankName); // Truyền thêm nếu cần
+                    intent.putExtra("selected_method", method);
                     startActivity(intent);
-                    return;
+                    return; // không trả về kết quả luôn
                 }
             }
 
-            // Trả kết quả về nếu không chọn Vietcombank
+            // Trả kết quả về CheckoutActivity
             Intent resultIntent = new Intent();
             resultIntent.putExtra("selected_method", method);
             setResult(RESULT_OK, resultIntent);

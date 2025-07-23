@@ -27,7 +27,6 @@ public class BankTransferActivity extends AppCompatActivity {
 
     private final String SHEET_URL = "https://script.google.com/macros/s/AKfycbzQybOZ8Of4lR_oan2QEi-vm1Z9l_YadibdmBK62S2xZsCNuClZLMgaDtjkx__6ITi0hg/exec";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +67,7 @@ public class BankTransferActivity extends AppCompatActivity {
 
     private void sendOrderToGoogleSheet() {
         ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setMessage("🔄 Đang gửi đơn hàng...");
+        dialog.setMessage("🔄 Đang kiểm tra thanh toán...");
         dialog.setCancelable(false);
         dialog.show();
 
@@ -99,10 +98,11 @@ public class BankTransferActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     dialog.dismiss();
                     if (responseCode == HttpURLConnection.HTTP_OK) {
-                        Toast.makeText(BankTransferActivity.this, "✅ Đơn hàng đã được gửi!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(BankTransferActivity.this, "✅ Thanh toán thành công ,Đơn hàng đã được gửi!", Toast.LENGTH_LONG).show();
 
-                        // Mở màn hình xác nhận thành công
-                        Intent intent = new Intent(BankTransferActivity.this, SuccessActivity.class);
+                        // 👉 Trả về HomeActivity ngay sau thanh toán
+                        Intent intent = new Intent(BankTransferActivity.this, HomeActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
 

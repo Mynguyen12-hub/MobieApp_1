@@ -1,35 +1,41 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="#FFF0F5"
+    android:gravity="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="center"
-    android:background="@android:color/white">
+    android:padding="24dp">
 
     <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:src="@drawable/ic_success"
-        android:layout_gravity="center"
-        android:contentDescription="Thành công" />
+        android:src="@drawable/ic_success_money"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginBottom="20dp"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Đơn hàng của bạn đã được xác nhận!"
-        android:textSize="20sp"
+        android:text="Payment Success"
+        android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="#2E7D32"
-        android:layout_marginTop="16dp"
-        android:gravity="center" />
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:text="Your payment was successful!\nJust wait Skincares arrive at home."
+        android:gravity="center"
+        android:layout_marginBottom="20dp"/>
+
+    <Button
+        android:id="@+id/btnTrackOrder"
+        android:text="Track Order Status"
+        android:layout_width="match_parent"
+        android:backgroundTint="#E91E63"
+        android:textColor="#FFFFFF"/>
 
     <Button
         android:id="@+id/btnBackHome"
+        android:text="Back to Home"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Quay về trang chủ"
-        android:layout_marginTop="32dp"
-        android:backgroundTint="@color/teal_700"
-        android:textColor="@android:color/white"/>
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#FFFFFF"
+        android:textColor="#E91E63"
+        android:background="@drawable/border_button"/>
 </LinearLayout>

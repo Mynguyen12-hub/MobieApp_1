@@ -16,7 +16,7 @@ import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText edtFullName, edtNewUsername, edtEmail, edtNewPassword;
+    EditText edtFullName, edtNewUsername, edtEmail, edtNewPassword, edtPhone, edtAddress;
     CheckBox cbAgreeTerms;
     Button btnSignUp, btnBackToLogin;
 
@@ -25,10 +25,13 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        // Ánh xạ các EditText
         edtFullName = findViewById(R.id.edtFullName);
         edtNewUsername = findViewById(R.id.edtNewUsername);
         edtEmail = findViewById(R.id.edtEmail);
         edtNewPassword = findViewById(R.id.edtNewPassword);
+        edtPhone = findViewById(R.id.edtPhone);
+        edtAddress = findViewById(R.id.edtAddress);
         cbAgreeTerms = findViewById(R.id.cbAgreeTerms);
         btnSignUp = findViewById(R.id.btnSignUp);
         btnBackToLogin = findViewById(R.id.btnBackToLogin);
@@ -38,7 +41,10 @@ public class RegisterActivity extends AppCompatActivity {
             String username = edtNewUsername.getText().toString().trim();
             String email = edtEmail.getText().toString().trim();
             String password = edtNewPassword.getText().toString().trim();
+            String phone = edtPhone.getText().toString().trim();
+            String address = edtAddress.getText().toString().trim();
 
+            // Kiểm tra dữ liệu đầu vào
             if (fullName.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                 return;
@@ -56,8 +62,12 @@ public class RegisterActivity extends AppCompatActivity {
 
             btnSignUp.setEnabled(false);
 
-            // Gửi dữ liệu lên MockAPI qua Retrofit
+            // Tạo đối tượng User
             User user = new User(fullName, username, email, password);
+            user.setPhone(phone);
+            user.setAddress(address);
+
+            // Gửi dữ liệu lên MockAPI
             UserApi userApi = ApiClient.getClient().create(UserApi.class);
             Call<User> call = userApi.registerUser(user);
 

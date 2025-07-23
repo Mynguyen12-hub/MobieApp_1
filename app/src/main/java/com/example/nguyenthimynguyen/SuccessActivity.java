@@ -2,7 +2,7 @@ package com.example.nguyenthimynguyen;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.os.Handler;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,15 +18,18 @@ public class SuccessActivity extends AppCompatActivity {
 
         btnBackHome = findViewById(R.id.btnBackHome);
 
-        btnBackHome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Chuyển về trang chính hoặc trang cần thiết
-                Intent intent = new Intent(SuccessActivity.this, HomeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish(); // Đóng SuccessActivity
-            }
-        });
+        btnBackHome.setOnClickListener(v -> goToHome());
+
+        // Tự động chuyển về Home sau 3 giây
+        new Handler().postDelayed(this::goToHome, 3000);
+    }
+
+    private void goToHome() {
+        Intent intent = new Intent(SuccessActivity.this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+
+        // Đóng tất cả activity hiện tại để không thể quay lại màn hình trước
+        finishAffinity();
     }
 }
